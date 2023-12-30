@@ -4,3 +4,6 @@ git status
 git commit -m"details"
 git log
 git clone
+bare repo vs non bare repo
+git pull
+git push
