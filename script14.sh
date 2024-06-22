@@ -1,7 +1,7 @@
 #!bin/bash
 if [ $# -ne 2 ]
 then
-echo "enter only jjhgjhgjhgjhgjhg2 Nos"
+echo "enter only trying for lerning Nos"
 exit
 fi
 num1=$1
