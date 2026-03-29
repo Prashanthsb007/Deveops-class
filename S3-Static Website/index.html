@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amazon S3 Storage Classes — HiQode Innovations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #146EB4;
+      --aws-light-blue: #1A9CD8;
+      --glacier-blue: #0077C5;
+      --bg: #0A0F1A;
+      --surface: #111827;
+      --surface2: #1C2535;
+      --border: rgba(255,153,0,0.15);
+      --text: #E8EDF5;
+      --muted: #8A96A8;
+      --accent: #FF9900;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* GRID BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,153,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,153,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,15,26,0.9);
+      backdrop-filter: blur(12px);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--aws-orange), #e67e00);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      letter-spacing: -1px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,153,0,0.1);
+      border: 1px solid rgba(255,153,0,0.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--aws-orange);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .header-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--aws-orange);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 80px 40px 60px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(255,153,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(20,110,180,0.15);
+      border: 1px solid rgba(20,110,180,0.4);
+      border-radius: 4px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      color: var(--aws-light-blue);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span {
+      color: var(--aws-orange);
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 12px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .hero-tagline {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: rgba(255,153,0,0.6);
+      letter-spacing: 0.08em;
+      margin-bottom: 48px;
+    }
+
+    /* access freq bar */
+    .freq-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 0 auto 64px;
+      max-width: 700px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .freq-label {
+      padding: 10px 20px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      white-space: nowrap;
+    }
+
+    .freq-label.hot { color: #FF6B35; }
+    .freq-label.cold { color: #7EC8E3; }
+
+    .freq-track {
+      flex: 1;
+      height: 4px;
+      background: linear-gradient(90deg, #FF6B35, #FF9900, #146EB4, #0077C5, #7EC8E3);
+      border-radius: 2px;
+    }
+
+    /* ─── SECTION TITLE ─── */
+    .section-title {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-title h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ─── CARDS GRID ─── */
+    .cards-section {
+      position: relative;
+      z-index: 1;
+      padding: 0 40px 80px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    /* card color themes */
+    .card.standard { border-color: rgba(255,107,53,0.3); }
+    .card.standard::before { background: linear-gradient(90deg, #FF6B35, #FF9900); }
+    .card.standard:hover { border-color: rgba(255,107,53,0.7); box-shadow: 0 20px 60px rgba(255,107,53,0.15); }
+
+    .card.standard-ia { border-color: rgba(255,153,0,0.3); }
+    .card.standard-ia::before { background: linear-gradient(90deg, #FF9900, #e6a817); }
+    .card.standard-ia:hover { border-color: rgba(255,153,0,0.7); box-shadow: 0 20px 60px rgba(255,153,0,0.15); }
+
+    .card.one-zone { border-color: rgba(26,156,216,0.3); }
+    .card.one-zone::before { background: linear-gradient(90deg, #1A9CD8, #146EB4); }
+    .card.one-zone:hover { border-color: rgba(26,156,216,0.7); box-shadow: 0 20px 60px rgba(26,156,216,0.15); }
+
+    .card.glacier { border-color: rgba(0,119,197,0.3); }
+    .card.glacier::before { background: linear-gradient(90deg, #0077C5, #005fa3); }
+    .card.glacier:hover { border-color: rgba(0,119,197,0.7); box-shadow: 0 20px 60px rgba(0,119,197,0.15); }
+
+    .card.intelligent { border-color: rgba(126,200,227,0.3); }
+    .card.intelligent::before { background: linear-gradient(90deg, #7EC8E3, #1A9CD8); }
+    .card.intelligent:hover { border-color: rgba(126,200,227,0.7); box-shadow: 0 20px 60px rgba(126,200,227,0.15); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.12s; }
+    .card:nth-child(3) { animation-delay: 0.19s; }
+    .card:nth-child(4) { animation-delay: 0.26s; }
+    .card:nth-child(5) { animation-delay: 0.33s; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .card.standard .card-icon    { background: rgba(255,107,53,0.15); }
+    .card.standard-ia .card-icon { background: rgba(255,153,0,0.15); }
+    .card.one-zone .card-icon    { background: rgba(26,156,216,0.15); }
+    .card.glacier .card-icon     { background: rgba(0,119,197,0.15); }
+    .card.intelligent .card-icon { background: rgba(126,200,227,0.15); }
+
+    .card-title-block { flex: 1; }
+
+    .card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .card-nickname {
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      opacity: 0.55;
+      letter-spacing: 0.05em;
+    }
+
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .card-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: rgba(232,237,245,0.8);
+      line-height: 1.4;
+    }
+
+    .card-features li::before {
+      content: '▸';
+      font-size: 10px;
+      margin-top: 3px;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+
+    .card.standard .card-features li::before    { color: #FF6B35; }
+    .card.standard-ia .card-features li::before { color: #FF9900; }
+    .card.one-zone .card-features li::before    { color: #1A9CD8; }
+    .card.glacier .card-features li::before     { color: #0077C5; }
+    .card.intelligent .card-features li::before { color: #7EC8E3; }
+
+    .use-cases {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .use-case-tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .card-mantra {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      line-height: 1.4;
+    }
+
+    .card.standard .card-mantra    { color: #FF6B35; }
+    .card.standard-ia .card-mantra { color: #FF9900; }
+    .card.one-zone .card-mantra    { color: #1A9CD8; }
+    .card.glacier .card-mantra     { color: #7EC8E3; }
+    .card.intelligent .card-mantra { color: #7EC8E3; }
+
+    /* ─── GLACIER SUB-TIERS ─── */
+    .glacier-tiers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .glacier-tier {
+      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid rgba(0,119,197,0.2);
+      background: rgba(0,119,197,0.07);
+    }
+
+    .glacier-tier-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #7EC8E3;
+      margin-bottom: 4px;
+    }
+
+    .glacier-tier p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ─── COMPARISON TABLE ─── */
+    .table-section {
+      position: relative;
+      z-index: 1;
+      padding: 0 40px 80px;
+    }
+
+    .table-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead tr {
+      background: var(--surface2);
+    }
+
+    thead th {
+      padding: 14px 18px;
+      text-align: left;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--aws-orange);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.2s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,153,0,0.03); }
+
+    td {
+      padding: 13px 18px;
+      color: rgba(232,237,245,0.85);
+      vertical-align: middle;
+    }
+
+    td:first-child {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+    }
+
+    .badge.high   { background: rgba(255,107,53,0.15); color: #FF6B35; border: 1px solid rgba(255,107,53,0.3); }
+    .badge.medium { background: rgba(255,153,0,0.15);  color: #FF9900; border: 1px solid rgba(255,153,0,0.3); }
+    .badge.low    { background: rgba(0,119,197,0.15);  color: #7EC8E3; border: 1px solid rgba(0,119,197,0.3); }
+    .badge.auto   { background: rgba(126,200,227,0.12); color: #7EC8E3; border: 1px solid rgba(126,200,227,0.3); }
+    .badge.yes    { background: rgba(0,200,100,0.1);   color: #4CE086; border: 1px solid rgba(0,200,100,0.2); }
+    .badge.no     { background: rgba(255,60,60,0.1);   color: #FF6B6B; border: 1px solid rgba(255,60,60,0.2); }
+
+    /* ─── HOW IT WORKS ─── */
+    .flow-section {
+      position: relative;
+      z-index: 1;
+      padding: 0 40px 80px;
+    }
+
+    .flow-track {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .flow-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .flow-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 2px solid;
+      position: relative;
+    }
+
+    .flow-circle.s3     { border-color: #FF9900; background: rgba(255,153,0,0.1); }
+    .flow-circle.move   { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
+    .flow-circle.arch   { border-color: #0077C5; background: rgba(0,119,197,0.1); }
+
+    .flow-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .flow-sub {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .flow-arrow {
+      font-size: 18px;
+      color: rgba(255,153,0,0.4);
+      flex-shrink: 0;
+      padding: 0 4px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 20px;
+    }
+
+    .footer-left .footer-org {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--aws-orange);
+      margin-bottom: 4px;
+    }
+
+    .footer-left p {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-right p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .s3-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,153,0,0.08);
+      border: 1px solid rgba(255,153,0,0.2);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--aws-orange);
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      header { padding: 0 20px; }
+      .hero { padding: 60px 20px 40px; }
+      .cards-section, .table-section, .flow-section { padding-left: 20px; padding-right: 20px; }
+      footer { padding: 30px 20px; flex-direction: column; text-align: center; }
+      .footer-right { text-align: center; }
+      .flow-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="logo-block">
+    <div class="logo-icon">Hi</div>
+    <div class="logo-text">
+      <span class="logo-name">HiQode Innovations</span>
+      <span class="logo-sub">Cloud Architecture Demo</span>
+    </div>
+  </div>
+  <div class="header-badge">Hosted on Amazon S3</div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">☁️ &nbsp; AWS Cloud Storage</div>
+  <h1>Amazon <span>S3</span> Storage<br/>Classes Explained</h1>
+  <p class="hero-sub">Store data based on access frequency, cost, and durability — choose the right class for every workload.</p>
+  <p class="hero-tagline">// Objects can move between storage classes at any time</p>
+
+  <div class="freq-bar">
+    <span class="freq-label hot">🔥 High Access</span>
+    <div class="freq-track"></div>
+    <span class="freq-label cold">❄️ Rare / Archive</span>
+  </div>
+</section>
+
+<!-- ─── STORAGE CLASS CARDS ─── -->
+<section class="cards-section">
+  <div class="section-title">
+    <h2>Storage Classes</h2>
+    <p>Pick the right class — save cost without sacrificing performance</p>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- S3 Standard -->
+    <div class="card standard">
+      <div class="card-header">
+        <div class="card-icon">🔥</div>
+        <div class="card-title-block">
+          <div class="card-name">S3 Standard</div>
+          <div class="card-nickname">'Hot Data'</div>
+        </div>
+      </div>
+      <ul class="card-features">
+        <li>Default S3 storage class</li>
+        <li>Frequently accessed data</li>
+        <li>Multi-AZ storage for high durability</li>
+        <li>Very low latency &amp; high throughput</li>
+        <li>Highest availability (99.99%)</li>
+        <li>No retrieval cost</li>
+      </ul>
+      <div class="use-cases">
+        <span class="use-case-tag">Website images</span>
+        <span class="use-case-tag">Videos</span>
+        <span class="use-case-tag">Daily logs</span>
+      </div>
+      <div class="card-mantra">Standard = data you touch every day.</div>
+    </div>
+
+    <!-- S3 Standard-IA -->
+    <div class="card standard-ia">
+      <div class="card-header">
+        <div class="card-icon">🕒</div>
+        <div class="card-title-block">
+          <div class="card-name">S3 Standard-IA</div>
+          <div class="card-nickname">'Infrequent Access'</div>
+        </div>
+      </div>
+      <ul class="card-features">
+        <li>Infrequently accessed data</li>
+        <li>Multi-AZ storage</li>
+        <li>Lower storage cost than Standard</li>
+        <li>Retrieval cost applies</li>
+        <li>Same durability as Standard</li>
+      </ul>
+      <div class="use-cases">
+        <span class="use-case-tag">Monthly backups</span>
+        <span class="use-case-tag">Audit reports</span>
+        <span class="use-case-tag">Old logs</span>
+      </div>
+      <div class="card-mantra">IA = rarely used, but must be available immediately.</div>
+    </div>
+
+    <!-- S3 One Zone-IA -->
+    <div class="card one-zone">
+      <div class="card-header">
+        <div class="card-icon">📦</div>
+        <div class="card-title-block">
+          <div class="card-name">S3 One Zone-IA</div>
+          <div class="card-nickname">'Single AZ'</div>
+        </div>
+      </div>
+      <ul class="card-features">
+        <li>Stored in ONE Availability Zone</li>
+        <li>Cheaper than Standard-IA</li>
+        <li>Lower availability</li>
+        <li>No multi-AZ protection</li>
+        <li>Data loss possible if AZ fails</li>
+        <li>Use only for re-creatable data</li>
+      </ul>
+      <div class="use-cases">
+        <span class="use-case-tag">Processed logs</span>
+        <span class="use-case-tag">Temp analytics</span>
+        <span class="use-case-tag">Cache data</span>
+      </div>
+      <div class="card-mantra">One Zone-IA = cheaper, but no second chance.</div>
+    </div>
+
+    <!-- S3 Glacier -->
+    <div class="card glacier">
+      <div class="card-header">
+        <div class="card-icon">❄️</div>
+        <div class="card-title-block">
+          <div class="card-name">S3 Glacier</div>
+          <div class="card-nickname">'Cold / Archive Storage'</div>
+        </div>
+      </div>
+      <ul class="card-features">
+        <li>Long-term archival storage</li>
+        <li>Extremely low storage cost</li>
+        <li>Retrieval is slow (minutes to hours)</li>
+        <li>Used for compliance &amp; history</li>
+      </ul>
+      <div class="glacier-tiers">
+        <div class="glacier-tier">
+          <div class="glacier-tier-name">💎 Glacier Instant Retrieval</div>
+          <p>Archive data — millisecond access. Higher cost than Deep Archive.</p>
+        </div>
+        <div class="glacier-tier">
+          <div class="glacier-tier-name">💎 Glacier Flexible Retrieval</div>
+          <p>Minutes to hours retrieval. Balances cost &amp; speed.</p>
+        </div>
+        <div class="glacier-tier">
+          <div class="glacier-tier-name">💎 Glacier Deep Archive</div>
+          <p>Cheapest S3 storage. Retrieval: 12–48 hours. Multi-year retention.</p>
+        </div>
+      </div>
+      <div class="use-cases">
+        <span class="use-case-tag">Bank statements</span>
+        <span class="use-case-tag">Medical records</span>
+        <span class="use-case-tag">Legal docs</span>
+      </div>
+      <div class="card-mantra">Glacier = store it, forget it, retrieve when needed.</div>
+    </div>
+
+    <!-- S3 Intelligent-Tiering -->
+    <div class="card intelligent">
+      <div class="card-header">
+        <div class="card-icon">🧠</div>
+        <div class="card-title-block">
+          <div class="card-name">S3 Intelligent-Tiering</div>
+          <div class="card-nickname">'Automatic'</div>
+        </div>
+      </div>
+      <ul class="card-features">
+        <li>AWS automatically moves objects between tiers</li>
+        <li>Based on access patterns</li>
+        <li>No performance impact</li>
+        <li>Small monitoring cost applies</li>
+        <li>Best when access pattern is unknown</li>
+      </ul>
+      <div class="use-cases">
+        <span class="use-case-tag">User uploads</span>
+        <span class="use-case-tag">SaaS app files</span>
+        <span class="use-case-tag">Unknown behavior</span>
+      </div>
+      <div class="card-mantra">Intelligent-Tiering = let AWS decide.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── COMPARISON TABLE ─── -->
+<section class="table-section">
+  <div class="section-title">
+    <h2>Quick Comparison</h2>
+    <p>Side-by-side view of key attributes across all storage classes</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Storage Class</th>
+          <th>Access Freq</th>
+          <th>Availability</th>
+          <th>Multi-AZ</th>
+          <th>Retrieval Cost</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>S3 Standard</td>
+          <td><span class="badge high">High</span></td>
+          <td>99.99%</td>
+          <td><span class="badge yes">✓ Yes</span></td>
+          <td><span class="badge yes">Free</span></td>
+          <td>Active workloads</td>
+        </tr>
+        <tr>
+          <td>S3 Standard-IA</td>
+          <td><span class="badge medium">Low</span></td>
+          <td>99.9%</td>
+          <td><span class="badge yes">✓ Yes</span></td>
+          <td><span class="badge medium">Per GB</span></td>
+          <td>Backups, reports</td>
+        </tr>
+        <tr>
+          <td>S3 One Zone-IA</td>
+          <td><span class="badge medium">Low</span></td>
+          <td>99.5%</td>
+          <td><span class="badge no">✗ No</span></td>
+          <td><span class="badge medium">Per GB</span></td>
+          <td>Re-creatable data</td>
+        </tr>
+        <tr>
+          <td>Glacier Instant</td>
+          <td><span class="badge low">Rare</span></td>
+          <td>99.9%</td>
+          <td><span class="badge yes">✓ Yes</span></td>
+          <td><span class="badge low">Higher</span></td>
+          <td>Archive w/ fast access</td>
+        </tr>
+        <tr>
+          <td>Glacier Flexible</td>
+          <td><span class="badge low">Rare</span></td>
+          <td>99.99%</td>
+          <td><span class="badge yes">✓ Yes</span></td>
+          <td><span class="badge low">Per GB</span></td>
+          <td>Compliance archive</td>
+        </tr>
+        <tr>
+          <td>Glacier Deep Archive</td>
+          <td><span class="badge low">Very Rare</span></td>
+          <td>99.99%</td>
+          <td><span class="badge yes">✓ Yes</span></td>
+          <td><span class="badge low">12-48 hrs</span></td>
+          <td>Long-term retention</td>
+        </tr>
+        <tr>
+          <td>S3 Intelligent-Tiering</td>
+          <td><span class="badge auto">Unknown</span></td>
+          <td>99.9%</td>
+          <td><span class="badge yes">✓ Yes</span></td>
+          <td><span class="badge auto">Auto</span></td>
+          <td>Variable access</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── HOW OBJECTS FLOW ─── -->
+<section class="flow-section">
+  <div class="section-title">
+    <h2>Object Lifecycle Flow</h2>
+    <p>Objects in your S3 bucket can seamlessly move between storage classes</p>
+  </div>
+  <div class="flow-track">
+    <div class="flow-node">
+      <div class="flow-circle s3">🪣</div>
+      <div class="flow-label">S3 Standard</div>
+      <div class="flow-sub">Hot Data</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-circle move">🕒</div>
+      <div class="flow-label">Standard-IA</div>
+      <div class="flow-sub">30+ days</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-circle move">📦</div>
+      <div class="flow-label">One Zone-IA</div>
+      <div class="flow-sub">Optional</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-circle arch">❄️</div>
+      <div class="flow-label">Glacier</div>
+      <div class="flow-sub">90+ days</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-circle arch">🗄️</div>
+      <div class="flow-label">Deep Archive</div>
+      <div class="flow-sub">180+ days</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-org">HiQode Innovations</div>
+    <p>AWS S3 Static Website Hosting Demo &nbsp;·&nbsp; Cloud Architecture Series</p>
+    <p style="margin-top:4px;">Choose S3 storage classes based on <strong style="color:var(--aws-orange)">access frequency</strong>, <strong style="color:var(--aws-orange)">cost</strong>, and <strong style="color:var(--aws-orange)">durability</strong>.</p>
+  </div>
+  <div class="footer-right">
+    <p>This page is hosted as a static website on</p>
+    <div class="s3-badge">☁️ &nbsp; Amazon S3 Bucket</div>
+  </div>
+</footer>
+
+</body>
+</html>
