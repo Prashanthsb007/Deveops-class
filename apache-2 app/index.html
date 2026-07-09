@@ -2,117 +2,1249 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DevOps Registration Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DevOps Registration Portal - Secure dashboard environment onboarding form.">
+  <title>DevOps Registration Portal</title>
+
+  <!-- Google Fonts: Outfit & Inter for ultra-modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons for high-tech vector styling -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f8c6d0;
-      font-family: Arial, Helvetica, sans-serif;
+    :root {
+      --bg-color: #080c16;
+      --card-bg: rgba(16, 22, 42, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dark: #64748b;
+      --primary-glow: rgba(99, 102, 241, 0.15);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --secondary: #06b6d4;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --error: #f43f5e;
+      --error-glow: rgba(244, 63, 94, 0.15);
+      --terminal-bg: #030712;
     }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient animated background blobs */
+    .blur-bg-1 {
+      position: absolute;
+      top: 10%;
+      left: 15%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0) 70%);
+      filter: blur(80px);
+      animation: float1 25s infinite ease-in-out alternate;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .blur-bg-2 {
+      position: absolute;
+      bottom: 10%;
+      right: 15%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0) 70%);
+      filter: blur(90px);
+      animation: float2 28s infinite ease-in-out alternate;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes float1 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, -40px) scale(1.1); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes float2 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-60px, 60px) scale(1.15); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    /* Grid pattern overlay */
+    .grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Main Container (Card) */
     .container {
-      background: #bfe3ef;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
       width: 90%;
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 30px;
-      border-radius: 6px;
+      max-width: 620px;
+      padding: 40px;
+      position: relative;
+      z-index: 10;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Header styling */
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-family: 'Outfit', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--secondary);
+      box-shadow: 0 0 8px var(--secondary);
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
 
     h2 {
-      text-align: center;
-      margin-bottom: 25px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
     }
 
-    label {
-      display: block;
-      margin: 15px 0 5px;
-      font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="email"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .gender {
-      margin-top: 10px;
-    }
-
-    .gender label {
-      font-weight: normal;
-      margin-right: 15px;
-    }
-
-    .note {
-      margin-top: 20px;
+    .subtitle {
+      color: var(--text-muted);
       font-size: 14px;
-      background: #e9f4f8;
-      padding: 10px;
-      border-radius: 4px;
+      line-height: 1.5;
+    }
+
+    /* Form Fields Grid & Items */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-span-2 {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 520px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .grid-span-2 {
+        grid-column: span 1;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 5px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      width: 16px;
+      height: 16px;
+      color: var(--text-dark);
+      pointer-events: none;
+      transition: color 0.3s ease;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      background: rgba(10, 15, 30, 0.55);
+      border: 1.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 13px 14px 13px 42px;
+      font-size: 14px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .input-wrapper input::placeholder {
+      color: #475569;
+    }
+
+    .input-wrapper input:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      background: rgba(10, 15, 30, 0.7);
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: #090e1d;
+    }
+
+    /* Valid & Touched States */
+    .input-wrapper.touched.valid input {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .input-wrapper.touched.valid input:focus {
+      box-shadow: 0 0 0 3px var(--success-glow);
+    }
+    .input-wrapper.touched.valid .input-icon {
+      color: var(--success);
+    }
+
+    .input-wrapper.touched.invalid input {
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+    .input-wrapper.touched.invalid input:focus {
+      box-shadow: 0 0 0 3px var(--error-glow);
+    }
+    .input-wrapper.touched.invalid .input-icon {
+      color: var(--error);
+    }
+
+    .input-wrapper input:focus + .input-icon {
+      color: var(--primary);
+    }
+
+    /* Custom Gender Selector Cards */
+    .gender-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 2px;
+    }
+
+    .gender-card {
+      position: relative;
+      background: rgba(10, 15, 30, 0.55);
+      border: 1.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .gender-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .gender-card svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    .gender-card span {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .gender-card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      color: var(--text-main);
+      background: rgba(99, 102, 241, 0.03);
+    }
+
+    .gender-card.selected {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+    }
+
+    .gender-card.selected svg {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    /* Terminal Window mockup for CLI Info Note */
+    .terminal-note {
+      background-color: var(--terminal-bg);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 25px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .terminal-header {
+      background-color: rgba(255, 255, 255, 0.02);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.red { background-color: #ef4444; }
+    .dot.yellow { background-color: #f59e0b; }
+    .dot.green { background-color: #10b981; }
+
+    .terminal-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .terminal-body {
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+
+    .terminal-cmd {
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+
+    .terminal-prompt {
+      color: #a5b4fc;
+      user-select: none;
+    }
+
+    .terminal-text {
+      color: #94a3b8;
+    }
+
+    /* Toggle Switch Component inside Terminal */
+    .terminal-toggle-panel {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toggle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-title {
+      font-size: 11px;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .toggle-desc {
+      font-size: 9px;
+      color: var(--text-dark);
+    }
+
+    .toggle-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #f8fafc;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .toggle-status {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      width: 32px;
+    }
+
+    .toggle-status.active {
+      color: var(--primary);
+    }
+
+    /* Submit Button */
+    .submit-container {
+      margin-top: 25px;
+      text-align: center;
     }
 
     .submit-btn {
-      margin-top: 20px;
+      width: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 50%, var(--secondary) 100%);
+      background-size: 200% auto;
+      color: #ffffff;
+      border: none;
+      padding: 14px 28px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .submit-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* DevOps Deployment Live Console & Success Layout */
+    .success-panel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
     }
 
-    button {
-      background: none;
-      border: none;
-      color: red;
-      font-size: 14px;
-      cursor: pointer;
+    .success-check-wrapper {
+      position: relative;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    button:disabled {
-      color: gray;
-      cursor: not-allowed;
+    .success-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid var(--success);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .success-circle svg {
+      width: 38px;
+      height: 38px;
+      color: var(--success);
+    }
+
+    .circle-glow {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: var(--success);
+      filter: blur(20px);
+      opacity: 0.3;
+      z-index: 1;
+      animation: pulse-glow 2s infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+      0% { transform: scale(1); opacity: 0.2; }
+      100% { transform: scale(1.2); opacity: 0.4; }
+    }
+
+    .success-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .success-subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 400px;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    /* Live Output Console */
+    .live-console {
+      width: 100%;
+      background-color: var(--terminal-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: #a7f3d0;
+      margin-bottom: 30px;
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .console-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .console-line {
+      margin-bottom: 8px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .console-line.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .line-timestamp {
+      color: var(--text-dark);
+      user-select: none;
+    }
+
+    .line-tag {
+      font-weight: bold;
+    }
+    .tag-info { color: #38bdf8; }
+    .tag-warn { color: #f59e0b; }
+    .tag-success { color: #34d399; }
+
+    .line-text {
+      color: #e2e8f0;
+    }
+
+    .summary-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .summary-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .summary-label {
+      font-size: 10px;
+      color: var(--text-dark);
+      text-transform: uppercase;
+    }
+
+    .summary-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .secondary-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top: 2px solid #ffffff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
-
 <body>
 
-  <div class="container">
-    <h2>Devops Registration Form</h2>
+  <!-- Animated glows -->
+  <div class="blur-bg-1"></div>
+  <div class="blur-bg-2"></div>
 
-    <form>
-      <label>Firstname:</label>
-      <input type="text" placeholder="Enter your Firstname" required>
+  <!-- Tech Grid Background -->
+  <div class="grid-overlay"></div>
 
-      <label>Middlename:</label>
-      <input type="text" placeholder="Enter your Middlename">
-
-      <label>Lastname:</label>
-      <input type="text" placeholder="Enter your Lastname" required>
-
-      <label>Gender :</label>
-      <div class="gender">
-        <label><input type="radio" name="gender" required> Male</label>
-        <label><input type="radio" name="gender"> Female</label>
-        <label><input type="radio" name="gender"> Other</label>
+  <!-- Registration Card Container -->
+  <div class="container" id="mainContainer">
+    
+    <!-- REGISTRATION FORM SCREEN -->
+    <div id="formPanel">
+      <div class="header-section">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span>Node-01 Active</span>
+        </div>
+        <h2>DevOps Registration Form</h2>
+        <p class="subtitle">Initialize your core profile and request container namespace provisioning.</p>
       </div>
 
-      <label>Email:</label>
-      <input type="email" placeholder="Enter Your personal Email ID" required>
+      <form id="regForm" novalidate>
+        <div class="form-grid">
+          
+          <!-- Firstname -->
+          <div class="form-group">
+            <label for="firstname">Firstname *</label>
+            <div class="input-wrapper" id="fnWrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="firstname" placeholder="e.g. Linus" required autocomplete="off">
+            </div>
+          </div>
 
-      <div class="note">
-        In this example, the disabled attribute is used to disable the Submit button.
-        If you click on the "Submit Form" button, without filling the values,
-        then it will not show the constraints included.
+          <!-- Middlename -->
+          <div class="form-group">
+            <label for="middlename">Middlename</label>
+            <div class="input-wrapper" id="mnWrapper">
+              <i data-lucide="user-minus" class="input-icon"></i>
+              <input type="text" id="middlename" placeholder="Optional" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- Lastname -->
+          <div class="form-group grid-span-2">
+            <label for="lastname">Lastname *</label>
+            <div class="input-wrapper" id="lnWrapper">
+              <i data-lucide="user-check" class="input-icon"></i>
+              <input type="text" id="lastname" placeholder="e.g. Torvalds" required autocomplete="off">
+            </div>
+          </div>
+
+          <!-- Gender Selector -->
+          <div class="form-group grid-span-2">
+            <label>Gender *</label>
+            <div class="gender-grid">
+              
+              <label class="gender-card" id="genderMaleCard">
+                <input type="radio" name="gender" value="Male" required>
+                <i data-lucide="mars"></i>
+                <span>Male</span>
+              </label>
+
+              <label class="gender-card" id="genderFemaleCard">
+                <input type="radio" name="gender" value="Female">
+                <i data-lucide="venus"></i>
+                <span>Female</span>
+              </label>
+
+              <label class="gender-card" id="genderOtherCard">
+                <input type="radio" name="gender" value="Other">
+                <i data-lucide="users"></i>
+                <span>Other</span>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group grid-span-2">
+            <label for="email">Email *</label>
+            <div class="input-wrapper" id="emWrapper">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="email" placeholder="e.g. linus@kernel.org" required autocomplete="off">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CLI terminal-styled instruction note -->
+        <div class="terminal-note">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="terminal-title">constraints_guide.sh</div>
+          </div>
+          <div class="terminal-body">
+            <p class="terminal-cmd"><span class="terminal-prompt">guest@devops-node:~$</span> cat readme.md</p>
+            <p class="terminal-text">
+              INFO: In this example, the disabled attribute is used to disable the Submit button.
+              If you click the submit button without filling required values, native browser constraint popups will not show.
+            </p>
+            
+            <!-- Interactive Switch Panel -->
+            <div class="terminal-toggle-panel">
+              <div class="toggle-info">
+                <div class="toggle-title">Interactive Validation Security Mode</div>
+                <div class="toggle-desc">Toggle button disabling vs HTML5 constraints validation</div>
+              </div>
+              <div class="toggle-control">
+                <label class="switch">
+                  <input type="checkbox" id="toggleSecurityMode" checked>
+                  <span class="slider"></span>
+                </label>
+                <span class="toggle-status active" id="toggleStatusLabel">ON</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Submit Panel -->
+        <div class="submit-container">
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span class="spinner" id="btnSpinner"></span>
+            <i data-lucide="terminal" id="btnIcon"></i>
+            <span id="btnText">Submit Form</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- LIVE DEPLOYMENT CONSOLE & SUCCESS SCREEN -->
+    <div id="successPanel" class="success-panel">
+      <div class="success-check-wrapper">
+        <div class="circle-glow"></div>
+        <div class="success-circle">
+          <i data-lucide="check"></i>
+        </div>
+      </div>
+      <h3 class="success-title">Environment Deployed</h3>
+      <p class="success-subtitle">Profile has been validated and resources are provisioned on Node-01.</p>
+
+      <!-- Interactive logs printing terminal -->
+      <div class="live-console" id="liveConsole">
+        <div class="console-header">
+          <span>Provisioning stdout</span>
+          <span style="color: var(--success)">● RUNNING</span>
+        </div>
+        <div id="consoleLogArea"></div>
       </div>
 
-      <div class="submit-btn">
-        <button type="submit">Submit Form</button>
+      <!-- User Profile Summary Box -->
+      <div class="summary-box">
+        <div class="summary-title">
+          <i data-lucide="shield" style="width:14px; height:14px; color: var(--secondary)"></i>
+          <span>Provisioned Metadata</span>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="summary-label">Full Name</span>
+            <span class="summary-value" id="sumFullName">-</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Gender</span>
+            <span class="summary-value" id="sumGender">-</span>
+          </div>
+          <div class="summary-item grid-span-2">
+            <span class="summary-label">User Email / Login ID</span>
+            <span class="summary-value" id="sumEmail">-</span>
+          </div>
+        </div>
       </div>
-    </form>
+
+      <button type="button" class="secondary-btn" id="resetBtn">
+        <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
+        <span>Register Another Node</span>
+      </button>
+    </div>
+
   </div>
 
+  <script>
+    // Initialize Lucide SVG Icons
+    lucide.createIcons();
+
+    // DOM Elements
+    const regForm = document.getElementById('regForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const btnIcon = document.getElementById('btnIcon');
+    const btnText = document.getElementById('btnText');
+    const toggleSecurityMode = document.getElementById('toggleSecurityMode');
+    const toggleStatusLabel = document.getElementById('toggleStatusLabel');
+
+    const formPanel = document.getElementById('formPanel');
+    const successPanel = document.getElementById('successPanel');
+    const mainContainer = document.getElementById('mainContainer');
+
+    const consoleLogArea = document.getElementById('consoleLogArea');
+    const liveConsole = document.getElementById('liveConsole');
+
+    const sumFullName = document.getElementById('sumFullName');
+    const sumGender = document.getElementById('sumGender');
+    const sumEmail = document.getElementById('sumEmail');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Form inputs
+    const firstname = document.getElementById('firstname');
+    const middlename = document.getElementById('middlename');
+    const lastname = document.getElementById('lastname');
+    const email = document.getElementById('email');
+    const genderRadios = document.getElementsByName('gender');
+    const genderCards = document.querySelectorAll('.gender-card');
+
+    // Input wrapper groupings for validation feedback classes
+    const fnWrapper = document.getElementById('fnWrapper');
+    const mnWrapper = document.getElementById('mnWrapper');
+    const lnWrapper = document.getElementById('lnWrapper');
+    const emWrapper = document.getElementById('emWrapper');
+
+    // Track state of inputs validation
+    const formFields = {
+      firstname: { element: firstname, wrapper: fnWrapper, valid: false, required: true },
+      lastname: { element: lastname, wrapper: lnWrapper, valid: false, required: true },
+      email: { element: email, wrapper: emWrapper, valid: false, required: true },
+    };
+
+    // Helper: Verify Email format regex
+    function isValidEmail(val) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(val);
+    }
+
+    // Gender Custom Radio click handler
+    genderCards.forEach(card => {
+      card.addEventListener('click', function() {
+        // Unselect all cards
+        genderCards.forEach(c => c.classList.remove('selected'));
+        // Select this one
+        this.classList.add('selected');
+        
+        // Find input inside and check it
+        const radio = this.querySelector('input[type="radio"]');
+        radio.checked = true;
+        
+        // Validate form
+        validateForm();
+      });
+    });
+
+    // Form Validation Checker
+    function validateForm() {
+      // Validate Firstname
+      if (firstname.value.trim().length > 0) {
+        formFields.firstname.valid = true;
+        fnWrapper.classList.add('valid');
+        fnWrapper.classList.remove('invalid');
+      } else {
+        formFields.firstname.valid = false;
+        if(fnWrapper.classList.contains('touched')) {
+          fnWrapper.classList.add('invalid');
+          fnWrapper.classList.remove('valid');
+        }
+      }
+
+      // Validate Lastname
+      if (lastname.value.trim().length > 0) {
+        formFields.lastname.valid = true;
+        lnWrapper.classList.add('valid');
+        lnWrapper.classList.remove('invalid');
+      } else {
+        formFields.lastname.valid = false;
+        if(lnWrapper.classList.contains('touched')) {
+          lnWrapper.classList.add('invalid');
+          lnWrapper.classList.remove('valid');
+        }
+      }
+
+      // Validate Email
+      if (isValidEmail(email.value.trim())) {
+        formFields.email.valid = true;
+        emWrapper.classList.add('valid');
+        emWrapper.classList.remove('invalid');
+      } else {
+        formFields.email.valid = false;
+        if(emWrapper.classList.contains('touched')) {
+          emWrapper.classList.add('invalid');
+          emWrapper.classList.remove('valid');
+        }
+      }
+
+      // Validate Gender choice
+      let genderSelected = false;
+      let genderVal = '';
+      for (const radio of genderRadios) {
+        if (radio.checked) {
+          genderSelected = true;
+          genderVal = radio.value;
+          break;
+        }
+      }
+
+      const allInputsValid = formFields.firstname.valid && formFields.lastname.valid && formFields.email.valid && genderSelected;
+
+      // Handle the button disabling based on the active Security Mode
+      if (toggleSecurityMode.checked) {
+        // Disabling mode ON: disable if anything is invalid
+        submitBtn.disabled = !allInputsValid;
+      } else {
+        // Disabling mode OFF: button is always enabled to allow HTML5 constraint popups
+        submitBtn.disabled = false;
+      }
+
+      return allInputsValid;
+    }
+
+    // Input Validation triggers (touched tracking)
+    [firstname, lastname, email].forEach(input => {
+      input.addEventListener('input', () => {
+        validateForm();
+      });
+
+      input.addEventListener('blur', function() {
+        const wrapper = this.parentElement;
+        wrapper.classList.add('touched');
+        validateForm();
+      });
+    });
+
+    // Toggle Button Security mode change listener
+    toggleSecurityMode.addEventListener('change', function() {
+      if (this.checked) {
+        toggleStatusLabel.innerText = "ON";
+        toggleStatusLabel.classList.add('active');
+      } else {
+        toggleStatusLabel.innerText = "OFF";
+        toggleStatusLabel.classList.remove('active');
+      }
+      validateForm();
+    });
+
+    // Live terminal line printer
+    function addConsoleLine(text, tag = 'info', delay = 0) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const line = document.createElement('div');
+          line.className = 'console-line';
+          
+          const timestamp = new Date().toLocaleTimeString([], { hour12: false });
+          let tagClass = 'tag-info';
+          let tagText = '[INFO]';
+          
+          if (tag === 'success') {
+            tagClass = 'tag-success';
+            tagText = '[OK]  ';
+          } else if (tag === 'warn') {
+            tagClass = 'tag-warn';
+            tagText = '[WARN]';
+          }
+
+          line.innerHTML = `
+            <span class="line-timestamp">[${timestamp}]</span>
+            <span class="line-tag ${tagClass}">${tagText}</span>
+            <span class="line-text">${text}</span>
+          `;
+          
+          consoleLogArea.appendChild(line);
+          
+          // Force layout refresh & fade in
+          setTimeout(() => {
+            line.classList.add('active');
+            liveConsole.scrollTop = liveConsole.scrollHeight;
+          }, 20);
+
+          resolve();
+        }, delay);
+      });
+    }
+
+    // Submit handler
+    regForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Run check
+      const isValid = validateForm();
+      if (!isValid) {
+        // If security mode was OFF, standard HTML5 constraints will automatically trigger here if field elements are not valid.
+        // We report validation explicitly just in case:
+        if (!firstname.value) firstname.reportValidity();
+        else if (!lastname.value) lastname.reportValidity();
+        else if (!email.value) email.reportValidity();
+        return;
+      }
+
+      // Start beautiful submission animation
+      submitBtn.disabled = true;
+      btnSpinner.style.display = 'block';
+      btnIcon.style.display = 'none';
+      btnText.innerText = "Deploying Node...";
+
+      // Gather form inputs
+      const fName = firstname.value.trim();
+      const mName = middlename.value.trim();
+      const lName = lastname.value.trim();
+      const fullName = mName ? `${fName} ${mName} ${lName}` : `${fName} ${lName}`;
+      const emailAddress = email.value.trim();
+      
+      let genderVal = '';
+      for (const radio of genderRadios) {
+        if (radio.checked) {
+          genderVal = radio.value;
+          break;
+        }
+      }
+
+      // Populate Success Summary cards
+      sumFullName.innerText = fullName;
+      sumGender.innerText = genderVal;
+      sumEmail.innerText = emailAddress;
+
+      // Simulate network request/compilation
+      setTimeout(async () => {
+        // Transition screens
+        formPanel.style.display = 'none';
+        successPanel.style.display = 'flex';
+        
+        // Dynamic Terminal Script
+        consoleLogArea.innerHTML = ''; // clear log
+        await addConsoleLine("Initializing DevOps compilation payload...", "info", 200);
+        await addConsoleLine("Securing handshake with API node [01]...", "info", 500);
+        await addConsoleLine("Verifying credential unique constraints...", "info", 400);
+        await addConsoleLine(`Found record identity: ${fName.toLowerCase()}.${lName.toLowerCase()}`, "info", 300);
+        await addConsoleLine(`Generating authentication token for ${emailAddress}...`, "info", 600);
+        await addConsoleLine("Container sandbox environment initialized successfully.", "success", 400);
+        await addConsoleLine("Mounting host namespaces and persistent volume chains...", "info", 500);
+        await addConsoleLine("Routing internal ingress routes for developer domain...", "info", 400);
+        await addConsoleLine("Build verification phase: SUCCESS.", "success", 300);
+        
+        // Final success status ping
+        await addConsoleLine("Profile successfully synchronized into cluster active directory.", "success", 400);
+      }, 1000);
+    });
+
+    // Reset button handler
+    resetBtn.addEventListener('click', function() {
+      // Reset inputs & classes
+      regForm.reset();
+      
+      genderCards.forEach(c => c.classList.remove('selected'));
+      [fnWrapper, mnWrapper, lnWrapper, emWrapper].forEach(w => {
+        w.classList.remove('touched', 'valid', 'invalid');
+      });
+
+      // Restore submit button state
+      submitBtn.disabled = true;
+      btnSpinner.style.display = 'none';
+      btnIcon.style.display = 'block';
+      btnText.innerText = "Submit Form";
+
+      // Transition screens back
+      successPanel.style.display = 'none';
+      formPanel.style.display = 'block';
+      
+      // Re-run validation setup
+      validateForm();
+    });
+
+    // Initial validation check on load
+    validateForm();
+  </script>
 </body>
 </html>
