@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevOps Registration Form</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f8c6d0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      background: #bfe3ef;
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 6px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .gender {
+      margin-top: 10px;
+    }
+
+    .gender label {
+      font-weight: normal;
+      margin-right: 15px;
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 14px;
+      background: #e9f4f8;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .submit-btn {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: red;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      color: gray;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Devops Registration Form</h2>
+
+    <form>
+      <label>Firstname:</label>
+      <input type="text" placeholder="Enter your Firstname" required>
+
+      <label>Middlename:</label>
+      <input type="text" placeholder="Enter your Middlename">
+
+      <label>Lastname:</label>
+      <input type="text" placeholder="Enter your Lastname" required>
+
+      <label>Gender :</label>
+      <div class="gender">
+        <label><input type="radio" name="gender" required> Male</label>
+        <label><input type="radio" name="gender"> Female</label>
+        <label><input type="radio" name="gender"> Other</label>
+      </div>
+
+      <label>Email:</label>
+      <input type="email" placeholder="Enter Your personal Email ID" required>
+
+      <div class="note">
+        In this example, the disabled attribute is used to disable the Submit button.
+        If you click on the "Submit Form" button, without filling the values,
+        then it will not show the constraints included.
+      </div>
+
+      <div class="submit-btn">
+        <button type="submit">Submit Form</button>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
