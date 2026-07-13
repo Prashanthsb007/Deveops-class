@@ -1,44 +1,43 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="DevOps Registration Portal - Secure dashboard environment onboarding form.">
   <title>DevOps Registration Portal</title>
-
   <!-- Google Fonts: Outfit & Inter for ultra-modern typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
   <!-- Lucide Icons for high-tech vector styling -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     :root {
-      --bg-color: #080c16;
-      --card-bg: rgba(16, 22, 42, 0.7);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --text-main: #f1f5f9;
+      --bg-color: #030712;
+      --card-bg: rgba(11, 17, 34, 0.7);
+      --border-color: rgba(99, 102, 241, 0.15);
+      --border-focus: #6366f1;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --text-dark: #64748b;
-      --primary-glow: rgba(99, 102, 241, 0.15);
+      --text-dark: #475569;
       --primary: #6366f1;
       --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
       --secondary: #06b6d4;
+      --secondary-glow: rgba(6, 182, 212, 0.2);
       --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.15);
-      --error: #f43f5e;
-      --error-glow: rgba(244, 63, 94, 0.15);
-      --terminal-bg: #030712;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --warn: #f59e0b;
+      --error: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.2);
+      --terminal-bg: #020617;
+      --glass-glow: rgba(255, 255, 255, 0.03);
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
@@ -49,48 +48,54 @@
       align-items: center;
       overflow-x: hidden;
       position: relative;
+      padding: 20px;
     }
-
+    /* Interactive Particle Canvas */
+    #particleCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
     /* Ambient animated background blobs */
     .blur-bg-1 {
       position: absolute;
-      top: 10%;
-      left: 15%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0) 70%);
-      filter: blur(80px);
+      top: 5%;
+      left: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%);
+      filter: blur(100px);
       animation: float1 25s infinite ease-in-out alternate;
       pointer-events: none;
-      z-index: 1;
+      z-index: 2;
     }
-
     .blur-bg-2 {
       position: absolute;
-      bottom: 10%;
-      right: 15%;
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0) 70%);
-      filter: blur(90px);
+      bottom: 5%;
+      right: 10%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(6, 182, 212, 0) 70%);
+      filter: blur(110px);
       animation: float2 28s infinite ease-in-out alternate;
       pointer-events: none;
-      z-index: 1;
+      z-index: 2;
     }
-
     @keyframes float1 {
       0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(60px, -40px) scale(1.1); }
+      50% { transform: translate(80px, -60px) scale(1.1); }
       100% { transform: translate(0, 0) scale(1); }
     }
-
     @keyframes float2 {
       0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-60px, 60px) scale(1.15); }
+      50% { transform: translate(-80px, 80px) scale(1.15); }
       100% { transform: translate(0, 0) scale(1); }
     }
-
-    /* Grid pattern overlay */
+    /* Tech Grid Background with Scanning Laser Line */
     .grid-overlay {
       position: absolute;
       top: 0;
@@ -98,109 +103,140 @@
       width: 100%;
       height: 100%;
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-      background-size: 32px 32px;
+        linear-gradient(rgba(99, 102, 241, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
       pointer-events: none;
-      z-index: 2;
+      z-index: 3;
     }
-
+    .grid-overlay::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.5), rgba(6, 182, 212, 0.2), transparent);
+      animation: scan 6s linear infinite;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+    }
+    @keyframes scan {
+      0% { top: -2%; }
+      100% { top: 102%; }
+    }
     /* Main Container (Card) */
     .container {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      width: 90%;
-      max-width: 620px;
+      box-shadow: 
+        0 25px 70px rgba(0, 0, 0, 0.6), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 0 40px rgba(99, 102, 241, 0.03);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 1100px;
       padding: 40px;
       position: relative;
       z-index: 10;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+    /* When success panel shows, adapt container to single-column centered */
+    .container.success-mode {
+      grid-template-columns: 1fr;
+      max-width: 680px;
+    }
     /* Header styling */
     .header-section {
-      text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
-
+    .badge-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.25);
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
       color: #a5b4fc;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 9999px;
       font-size: 11px;
       font-family: 'Outfit', sans-serif;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      margin-bottom: 12px;
       font-weight: 600;
     }
-
     .badge-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background-color: var(--secondary);
-      box-shadow: 0 0 8px var(--secondary);
+      box-shadow: 0 0 10px var(--secondary);
       animation: pulse 1.5s infinite alternate;
     }
-
+    .audio-toggle {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .audio-toggle:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: var(--text-main);
+    }
     @keyframes pulse {
-      0% { opacity: 0.4; }
+      0% { opacity: 0.3; }
       100% { opacity: 1; }
     }
-
     h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
       background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
     }
-
     .subtitle {
       color: var(--text-muted);
       font-size: 14px;
       line-height: 1.5;
     }
-
     /* Form Fields Grid & Items */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
-
     .grid-span-2 {
       grid-column: span 2;
     }
-
-    @media (max-width: 520px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-      .grid-span-2 {
-        grid-column: span 1;
-      }
-    }
-
     .form-group {
       margin-bottom: 5px;
     }
-
     .form-group label {
-      display: block;
+      display: flex;
+      justify-content: space-between;
       font-family: 'Outfit', sans-serif;
       font-size: 11px;
       font-weight: 600;
@@ -209,13 +245,19 @@
       color: var(--text-muted);
       margin-bottom: 8px;
     }
-
+    .field-status {
+      font-size: 10px;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: normal;
+    }
+    .field-status.valid { color: var(--success); }
+    .field-status.invalid { color: var(--error); }
     .input-wrapper {
       position: relative;
       display: flex;
       align-items: center;
     }
-
     .input-icon {
       position: absolute;
       left: 14px;
@@ -225,60 +267,109 @@
       pointer-events: none;
       transition: color 0.3s ease;
     }
-
-    .input-wrapper input {
+    .input-wrapper input, .input-wrapper select {
       width: 100%;
-      background: rgba(10, 15, 30, 0.55);
-      border: 1.5px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
-      padding: 13px 14px 13px 42px;
+      background: rgba(6, 9, 20, 0.6);
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 13px 14px 13px 44px;
       font-size: 14px;
       color: var(--text-main);
       font-family: 'Inter', sans-serif;
       outline: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+    .input-wrapper select {
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .input-wrapper select + .select-arrow {
+      position: absolute;
+      right: 14px;
+      width: 16px;
+      height: 16px;
+      color: var(--text-dark);
+      pointer-events: none;
+    }
     .input-wrapper input::placeholder {
-      color: #475569;
+      color: #334155;
     }
-
-    .input-wrapper input:hover {
+    .input-wrapper input:hover, .input-wrapper select:hover {
       border-color: rgba(99, 102, 241, 0.3);
-      background: rgba(10, 15, 30, 0.7);
+      background: rgba(6, 9, 20, 0.85);
     }
-
-    .input-wrapper input:focus {
-      border-color: var(--primary);
+    .input-wrapper input:focus, .input-wrapper select:focus {
+      border-color: var(--border-focus);
       box-shadow: 0 0 0 3px var(--primary-glow);
-      background: #090e1d;
+      background: #040814;
     }
-
     /* Valid & Touched States */
-    .input-wrapper.touched.valid input {
+    .input-wrapper.touched.valid input, .input-wrapper.touched.valid select {
       border-color: rgba(16, 185, 129, 0.4);
     }
-    .input-wrapper.touched.valid input:focus {
+    .input-wrapper.touched.valid input:focus, .input-wrapper.touched.valid select:focus {
       box-shadow: 0 0 0 3px var(--success-glow);
     }
     .input-wrapper.touched.valid .input-icon {
       color: var(--success);
     }
-
-    .input-wrapper.touched.invalid input {
-      border-color: rgba(244, 63, 94, 0.4);
+    .input-wrapper.touched.invalid input, .input-wrapper.touched.invalid select {
+      border-color: rgba(239, 68, 68, 0.4);
     }
-    .input-wrapper.touched.invalid input:focus {
+    .input-wrapper.touched.invalid input:focus, .input-wrapper.touched.invalid select:focus {
       box-shadow: 0 0 0 3px var(--error-glow);
     }
     .input-wrapper.touched.invalid .input-icon {
       color: var(--error);
     }
-
-    .input-wrapper input:focus + .input-icon {
+    .input-wrapper input:focus + .input-icon, .input-wrapper select:focus + .input-icon {
       color: var(--primary);
     }
-
+    /* Slider / Range customization */
+    .slider-container {
+      background: rgba(6, 9, 20, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 2px;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      color: var(--text-muted);
+    }
+    .slider-val {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+    .range-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #1e293b;
+      outline: none;
+      transition: background 0.3s;
+    }
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--secondary);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--secondary-glow);
+      transition: transform 0.1s;
+    }
+    .range-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 12px var(--secondary);
+    }
     /* Custom Gender Selector Cards */
     .gender-grid {
       display: grid;
@@ -286,16 +377,15 @@
       gap: 12px;
       margin-top: 2px;
     }
-
     .gender-card {
       position: relative;
-      background: rgba(10, 15, 30, 0.55);
-      border: 1.5px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
+      background: rgba(6, 9, 20, 0.6);
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
       padding: 12px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -304,109 +394,158 @@
       color: var(--text-muted);
       user-select: none;
     }
-
     .gender-card input[type="radio"] {
       position: absolute;
       opacity: 0;
       width: 0;
       height: 0;
     }
-
     .gender-card svg {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       color: var(--text-dark);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .gender-card span {
       font-size: 13px;
       font-weight: 500;
     }
-
     .gender-card:hover {
       border-color: rgba(99, 102, 241, 0.3);
       color: var(--text-main);
       background: rgba(99, 102, 241, 0.03);
+      transform: translateY(-2px);
     }
-
     .gender-card.selected {
       background: rgba(99, 102, 241, 0.12);
       border-color: var(--primary);
       color: #ffffff;
-      box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
-
     .gender-card.selected svg {
       color: var(--primary);
-      transform: scale(1.1);
+      transform: scale(1.15);
     }
-
-    /* Terminal Window mockup for CLI Info Note */
-    .terminal-note {
-      background-color: var(--terminal-bg);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
+    /* RIGHT COLUMN: Interactive Status & Preview */
+    .interactive-hub {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    /* Resource Meter Panel */
+    .status-panel-card {
+      background: rgba(6, 9, 20, 0.45);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .hub-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .metric-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .metric-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+    }
+    .metric-label { color: var(--text-muted); }
+    .metric-value { color: var(--text-main); font-weight: 500; }
+    .metric-bar-bg {
+      height: 6px;
+      background: #1e293b;
+      border-radius: 3px;
       overflow: hidden;
-      margin-top: 25px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      position: relative;
     }
-
+    .metric-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* Live Payload JSON Terminal */
+    .payload-terminal {
+      background: var(--terminal-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
     .terminal-header {
       background-color: rgba(255, 255, 255, 0.02);
-      padding: 10px 16px;
+      padding: 12px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     .terminal-dots {
       display: flex;
       gap: 6px;
     }
-
     .dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       display: inline-block;
     }
-
     .dot.red { background-color: #ef4444; }
     .dot.yellow { background-color: #f59e0b; }
     .dot.green { background-color: #10b981; }
-
     .terminal-title {
       font-family: 'Fira Code', monospace;
       font-size: 11px;
       color: var(--text-muted);
       letter-spacing: 0.5px;
     }
-
     .terminal-body {
-      padding: 16px;
+      padding: 18px;
       font-family: 'Fira Code', monospace;
-      font-size: 12px;
-      line-height: 1.5;
+      font-size: 11.5px;
+      line-height: 1.6;
       color: #cbd5e1;
+      overflow-y: auto;
+      flex-grow: 1;
     }
-
     .terminal-cmd {
       color: var(--secondary);
       margin-bottom: 8px;
     }
-
     .terminal-prompt {
       color: #a5b4fc;
       user-select: none;
     }
-
     .terminal-text {
       color: #94a3b8;
     }
-
-    /* Toggle Switch Component inside Terminal */
+    .json-key { color: #a5b4fc; }
+    .json-string { color: #34d399; }
+    .json-number { color: #fb7185; }
+    .json-bracket { color: #cbd5e1; }
+    /* Interactive Switch Panel */
     .terminal-toggle-panel {
       margin-top: 15px;
       padding-top: 12px;
@@ -417,43 +556,36 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-
     .toggle-info {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
-
     .toggle-title {
       font-size: 11px;
       color: #e2e8f0;
       font-weight: 500;
     }
-
     .toggle-desc {
       font-size: 9px;
       color: var(--text-dark);
     }
-
     .toggle-control {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .switch {
       position: relative;
       display: inline-block;
-      width: 42px;
+      width: 44px;
       height: 22px;
     }
-
     .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-
     .slider {
       position: absolute;
       cursor: pointer;
@@ -461,35 +593,31 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #334155;
-      transition: .3s;
+      background-color: #1e293b;
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
       border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     .slider:before {
       position: absolute;
       content: "";
-      height: 16px;
-      width: 16px;
+      height: 14px;
+      width: 14px;
       left: 3px;
       bottom: 3px;
       background-color: #f8fafc;
-      transition: .3s;
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
       border-radius: 50%;
     }
-
     input:checked + .slider {
       background-color: var(--primary);
     }
-
     input:focus + .slider {
       box-shadow: 0 0 1px var(--primary);
     }
-
     input:checked + .slider:before {
-      transform: translateX(20px);
+      transform: translateX(22px);
     }
-
     .toggle-status {
       font-size: 10px;
       font-weight: 600;
@@ -498,48 +626,41 @@
       color: var(--text-muted);
       width: 32px;
     }
-
     .toggle-status.active {
       color: var(--primary);
     }
-
     /* Submit Button */
     .submit-container {
       margin-top: 25px;
-      text-align: center;
     }
-
     .submit-btn {
       width: 100%;
       background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 50%, var(--secondary) 100%);
       background-size: 200% auto;
       color: #ffffff;
       border: none;
-      padding: 14px 28px;
+      padding: 15px 28px;
       font-family: 'Outfit', sans-serif;
       font-size: 15px;
       font-weight: 600;
       letter-spacing: 0.5px;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
     }
-
     .submit-btn:hover:not(:disabled) {
       background-position: right center;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.5);
     }
-
     .submit-btn:active:not(:disabled) {
       transform: translateY(0);
     }
-
     .submit-btn:disabled {
       background: rgba(255, 255, 255, 0.04);
       color: rgba(255, 255, 255, 0.15);
@@ -547,12 +668,10 @@
       box-shadow: none;
       cursor: not-allowed;
     }
-
     .submit-btn svg {
       width: 16px;
       height: 16px;
     }
-
     /* DevOps Deployment Live Console & Success Layout */
     .success-panel {
       display: none;
@@ -560,18 +679,16 @@
       align-items: center;
       text-align: center;
     }
-
     .success-check-wrapper {
       position: relative;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
     .success-circle {
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       background: rgba(16, 185, 129, 0.1);
       border: 2px solid var(--success);
@@ -580,67 +697,96 @@
       align-items: center;
       z-index: 2;
     }
-
     .success-circle svg {
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       color: var(--success);
     }
-
     .circle-glow {
       position: absolute;
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       background-color: var(--success);
-      filter: blur(20px);
+      filter: blur(25px);
       opacity: 0.3;
       z-index: 1;
       animation: pulse-glow 2s infinite alternate;
     }
-
     @keyframes pulse-glow {
       0% { transform: scale(1); opacity: 0.2; }
-      100% { transform: scale(1.2); opacity: 0.4; }
+      100% { transform: scale(1.25); opacity: 0.45; }
     }
-
     .success-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
+      font-size: 28px;
+      font-weight: 800;
       color: #ffffff;
       margin-bottom: 10px;
     }
-
     .success-subtitle {
       color: var(--text-muted);
       font-size: 14px;
-      max-width: 400px;
-      margin-bottom: 30px;
+      max-width: 450px;
+      margin-bottom: 25px;
       line-height: 1.5;
     }
-
+    /* Success Dashboard Cards */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      width: 100%;
+      margin-bottom: 25px;
+    }
+    .dash-card {
+      background: rgba(6, 9, 20, 0.45);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .dash-label {
+      font-size: 10px;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .dash-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .dash-val.highlight {
+      color: var(--secondary);
+    }
     /* Live Output Console */
     .live-console {
       width: 100%;
       background-color: var(--terminal-bg);
       border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 20px;
       text-align: left;
       font-family: 'Fira Code', monospace;
       font-size: 12px;
-      color: #a7f3d0;
-      margin-bottom: 30px;
-      max-height: 250px;
+      color: #cbd5e1;
+      margin-bottom: 25px;
+      height: 220px;
       overflow-y: auto;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
     }
-
     .console-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
       margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
@@ -649,48 +795,41 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-
     .console-line {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       opacity: 0;
       transform: translateY(4px);
       transition: all 0.3s ease;
       display: flex;
       align-items: flex-start;
-      gap: 6px;
+      gap: 8px;
     }
-
     .console-line.active {
       opacity: 1;
       transform: translateY(0);
     }
-
     .line-timestamp {
       color: var(--text-dark);
       user-select: none;
     }
-
     .line-tag {
       font-weight: bold;
     }
     .tag-info { color: #38bdf8; }
     .tag-warn { color: #f59e0b; }
     .tag-success { color: #34d399; }
-
     .line-text {
       color: #e2e8f0;
     }
-
     .summary-box {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
+      border-radius: 12px;
       width: 100%;
-      padding: 16px;
-      margin-bottom: 30px;
+      padding: 18px;
+      margin-bottom: 25px;
       text-align: left;
     }
-
     .summary-title {
       font-family: 'Outfit', sans-serif;
       font-size: 12px;
@@ -703,31 +842,33 @@
       align-items: center;
       gap: 6px;
     }
-
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
-
     .summary-item {
       display: flex;
       flex-direction: column;
       gap: 3px;
     }
-
     .summary-label {
       font-size: 10px;
       color: var(--text-dark);
       text-transform: uppercase;
     }
-
     .summary-value {
       font-size: 13px;
       font-weight: 500;
       color: var(--text-main);
     }
-
+    /* Actions Panel */
+    .success-actions {
+      display: flex;
+      gap: 15px;
+      width: 100%;
+      justify-content: center;
+    }
     .secondary-btn {
       background: rgba(255, 255, 255, 0.03);
       color: var(--text-main);
@@ -736,24 +877,21 @@
       font-family: 'Outfit', sans-serif;
       font-size: 14px;
       font-weight: 600;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
-
     .secondary-btn:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.15);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
-
     .secondary-btn:active {
       transform: translateY(0);
     }
-
     /* Loading Spinner */
     .spinner {
       border: 2px solid rgba(255, 255, 255, 0.2);
@@ -764,48 +902,79 @@
       animation: spin 0.8s linear infinite;
       display: none;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 30px 20px;
+      }
+    }
+    @media (max-width: 520px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .grid-span-2 {
+        grid-column: span 1;
+      }
+      .gender-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .success-actions {
+        flex-direction: column;
+      }
+      .secondary-btn, .submit-btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-
-  <!-- Animated glows -->
+  <!-- Particle Background Canvas -->
+  <canvas id="particleCanvas"></canvas>
+  <!-- Ambient glows -->
   <div class="blur-bg-1"></div>
   <div class="blur-bg-2"></div>
-
   <!-- Tech Grid Background -->
   <div class="grid-overlay"></div>
-
   <!-- Registration Card Container -->
   <div class="container" id="mainContainer">
     
     <!-- REGISTRATION FORM SCREEN -->
     <div id="formPanel">
       <div class="header-section">
-        <div class="badge">
-          <span class="badge-dot"></span>
-          <span>Node-01 Active</span>
+        <div class="badge-container">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span>Cluster Onboarding active</span>
+          </div>
+          <!-- Audio Blip Toggle -->
+          <button class="audio-toggle" id="audioToggle" title="Toggle audio cues (low blips)">
+            <i data-lucide="volume-x"></i>
+          </button>
         </div>
-        <h2>DevOps Registration Form</h2>
-        <p class="subtitle">Initialize your core profile and request container namespace provisioning.</p>
+        <h2>DevOps Provisioning Portal</h2>
+        <p class="subtitle">Configure your core identity details and dynamic environment resource limits.</p>
       </div>
-
       <form id="regForm" novalidate>
         <div class="form-grid">
           
           <!-- Firstname -->
           <div class="form-group">
-            <label for="firstname">Firstname *</label>
+            <label for="firstname">
+              <span>Firstname *</span>
+              <span class="field-status" id="fnStatus"></span>
+            </label>
             <div class="input-wrapper" id="fnWrapper">
               <i data-lucide="user" class="input-icon"></i>
               <input type="text" id="firstname" placeholder="e.g. Linus" required autocomplete="off">
             </div>
           </div>
-
           <!-- Middlename -->
           <div class="form-group">
             <label for="middlename">Middlename</label>
@@ -814,16 +983,17 @@
               <input type="text" id="middlename" placeholder="Optional" autocomplete="off">
             </div>
           </div>
-
           <!-- Lastname -->
           <div class="form-group grid-span-2">
-            <label for="lastname">Lastname *</label>
+            <label for="lastname">
+              <span>Lastname *</span>
+              <span class="field-status" id="lnStatus"></span>
+            </label>
             <div class="input-wrapper" id="lnWrapper">
               <i data-lucide="user-check" class="input-icon"></i>
               <input type="text" id="lastname" placeholder="e.g. Torvalds" required autocomplete="off">
             </div>
           </div>
-
           <!-- Gender Selector -->
           <div class="form-group grid-span-2">
             <label>Gender *</label>
@@ -834,79 +1004,162 @@
                 <i data-lucide="mars"></i>
                 <span>Male</span>
               </label>
-
               <label class="gender-card" id="genderFemaleCard">
                 <input type="radio" name="gender" value="Female">
                 <i data-lucide="venus"></i>
                 <span>Female</span>
               </label>
-
               <label class="gender-card" id="genderOtherCard">
                 <input type="radio" name="gender" value="Other">
                 <i data-lucide="users"></i>
                 <span>Other</span>
               </label>
-
             </div>
           </div>
-
           <!-- Email -->
           <div class="form-group grid-span-2">
-            <label for="email">Email *</label>
+            <label for="email">
+              <span>Email *</span>
+              <span class="field-status" id="emStatus"></span>
+            </label>
             <div class="input-wrapper" id="emWrapper">
               <i data-lucide="mail" class="input-icon"></i>
               <input type="email" id="email" placeholder="e.g. linus@kernel.org" required autocomplete="off">
             </div>
           </div>
-
-        </div>
-
-        <!-- CLI terminal-styled instruction note -->
-        <div class="terminal-note">
-          <div class="terminal-header">
-            <div class="terminal-dots">
-              <span class="dot red"></span>
-              <span class="dot yellow"></span>
-              <span class="dot green"></span>
+          <!-- Target Environment -->
+          <div class="form-group">
+            <label for="environment">Target Environment</label>
+            <div class="input-wrapper">
+              <i data-lucide="server" class="input-icon"></i>
+              <select id="environment">
+                <option value="Development" selected>Development Namespace</option>
+                <option value="Staging">Staging Namespace</option>
+                <option value="Production">Production Namespace</option>
+              </select>
+              <i data-lucide="chevron-down" class="select-arrow"></i>
             </div>
-            <div class="terminal-title">constraints_guide.sh</div>
           </div>
-          <div class="terminal-body">
-            <p class="terminal-cmd"><span class="terminal-prompt">guest@devops-node:~$</span> cat readme.md</p>
-            <p class="terminal-text">
-              INFO: In this example, the disabled attribute is used to disable the Submit button.
-              If you click the submit button without filling required values, native browser constraint popups will not show.
-            </p>
-            
-            <!-- Interactive Switch Panel -->
-            <div class="terminal-toggle-panel">
-              <div class="toggle-info">
-                <div class="toggle-title">Interactive Validation Security Mode</div>
-                <div class="toggle-desc">Toggle button disabling vs HTML5 constraints validation</div>
-              </div>
-              <div class="toggle-control">
-                <label class="switch">
-                  <input type="checkbox" id="toggleSecurityMode" checked>
-                  <span class="slider"></span>
-                </label>
-                <span class="toggle-status active" id="toggleStatusLabel">ON</span>
-              </div>
+          <!-- Target Node -->
+          <div class="form-group">
+            <label for="node">Provision Node Target</label>
+            <div class="input-wrapper">
+              <i data-lucide="cpu" class="input-icon"></i>
+              <select id="node">
+                <option value="Node-01-US" selected>Node-01 (US-East)</option>
+                <option value="Node-02-EU">Node-02 (EU-West)</option>
+                <option value="Node-03-AP">Node-03 (AP-South)</option>
+              </select>
+              <i data-lucide="chevron-down" class="select-arrow"></i>
             </div>
-
+          </div>
+          <!-- Resource allocation (CPU) -->
+          <div class="form-group grid-span-2">
+            <label for="cpuRange">Requested CPU Limit</label>
+            <div class="slider-container">
+              <div class="slider-labels">
+                <span>Minimum: 1 Core</span>
+                <span>Current: <span id="cpuVal" class="slider-val">2 Cores</span></span>
+                <span>Max: 8 Cores</span>
+              </div>
+              <input type="range" id="cpuRange" class="range-slider" min="1" max="8" value="2">
+            </div>
+          </div>
+          <!-- Resource allocation (Memory) -->
+          <div class="form-group grid-span-2">
+            <label for="ramRange">Requested RAM Allocation</label>
+            <div class="slider-container">
+              <div class="slider-labels">
+                <span>Minimum: 2 GB</span>
+                <span>Current: <span id="ramVal" class="slider-val">4 GB</span></span>
+                <span>Max: 16 GB</span>
+              </div>
+              <input type="range" id="ramRange" class="range-slider" min="2" max="16" step="2" value="4">
+            </div>
           </div>
         </div>
-
         <!-- Submit Panel -->
         <div class="submit-container">
           <button type="submit" class="submit-btn" id="submitBtn">
             <span class="spinner" id="btnSpinner"></span>
             <i data-lucide="terminal" id="btnIcon"></i>
-            <span id="btnText">Submit Form</span>
+            <span id="btnText">Deploy Pod Resources</span>
           </button>
         </div>
       </form>
     </div>
-
+    <!-- RIGHT COLUMN: INTERACTIVE STATUS PANEL -->
+    <div id="interactiveHub" class="interactive-hub">
+      
+      <!-- Virtual Resource Allocator meter -->
+      <div class="status-panel-card">
+        <h3 class="hub-title">
+          <i data-lucide="activity" style="width:16px; height:16px; color:var(--secondary)"></i>
+          <span>Workspace Resource Limiters</span>
+        </h3>
+        <div class="metric-list">
+          
+          <div class="metric-item">
+            <div class="metric-info">
+              <span class="metric-label">CPU QUOTA</span>
+              <span class="metric-value" id="cpuMeterText">25% (2 / 8 Cores)</span>
+            </div>
+            <div class="metric-bar-bg">
+              <div class="metric-bar-fill" id="cpuMeterBar" style="width: 25%"></div>
+            </div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-info">
+              <span class="metric-label">RAM ALLOCATION</span>
+              <span class="metric-value" id="ramMeterText">25% (4 / 16 GB)</span>
+            </div>
+            <div class="metric-bar-bg">
+              <div class="metric-bar-fill" id="ramMeterBar" style="width: 25%"></div>
+            </div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-info">
+              <span class="metric-label">ENVIRONMENT WEIGHT</span>
+              <span class="metric-value" id="envWeightText">Standard (dev)</span>
+            </div>
+            <div class="metric-bar-bg">
+              <div class="metric-bar-fill" id="envWeightBar" style="width: 30%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Real-time Payload Generator Preview -->
+      <div class="payload-terminal">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="terminal-title">live_payload_builder.json</div>
+        </div>
+        <div class="terminal-body" id="payloadTerminal">
+          <pre id="jsonPreview"></pre>
+        </div>
+        
+        <!-- Toggle Security Panel at terminal base -->
+        <div class="terminal-body" style="padding-top: 0; flex-grow: 0;">
+          <div class="terminal-toggle-panel">
+            <div class="toggle-info">
+              <div class="toggle-title">Strict UI-Level Validation</div>
+              <div class="toggle-desc">Lock submit until all form criteria match spec</div>
+            </div>
+            <div class="toggle-control">
+              <label class="switch">
+                <input type="checkbox" id="toggleSecurityMode" checked>
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-status active" id="toggleStatusLabel">ON</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- LIVE DEPLOYMENT CONSOLE & SUCCESS SCREEN -->
     <div id="successPanel" class="success-panel">
       <div class="success-check-wrapper">
@@ -915,23 +1168,38 @@
           <i data-lucide="check"></i>
         </div>
       </div>
-      <h3 class="success-title">Environment Deployed</h3>
-      <p class="success-subtitle">Profile has been validated and resources are provisioned on Node-01.</p>
-
+      <h3 class="success-title">Environment Provisioned</h3>
+      <p class="success-subtitle">Your credentials have passed validations and resources are running live in the cluster namespace.</p>
+      <!-- Dashboard Statistics metrics cards -->
+      <div class="dashboard-grid">
+        <div class="dash-card">
+          <span class="dash-label">Target Env</span>
+          <span class="dash-val highlight" id="sumEnv">-</span>
+        </div>
+        <div class="dash-card">
+          <span class="dash-label">Limits Profile</span>
+          <span class="dash-val" id="sumLimits">-</span>
+        </div>
+        <div class="dash-card">
+          <span class="dash-label">API Gateway Latency</span>
+          <span class="dash-val" id="sumLatency">12ms</span>
+        </div>
+      </div>
       <!-- Interactive logs printing terminal -->
       <div class="live-console" id="liveConsole">
         <div class="console-header">
           <span>Provisioning stdout</span>
-          <span style="color: var(--success)">● RUNNING</span>
+          <span style="color: var(--success); font-weight: bold; display: flex; align-items: center; gap: 4px;">
+            <span class="badge-dot"></span> RUNNING
+          </span>
         </div>
         <div id="consoleLogArea"></div>
       </div>
-
       <!-- User Profile Summary Box -->
       <div class="summary-box">
         <div class="summary-title">
           <i data-lucide="shield" style="width:14px; height:14px; color: var(--secondary)"></i>
-          <span>Provisioned Metadata</span>
+          <span>Active Identity Metadata</span>
         </div>
         <div class="summary-grid">
           <div class="summary-item">
@@ -939,28 +1207,30 @@
             <span class="summary-value" id="sumFullName">-</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Gender</span>
+            <span class="summary-label">Gender Identity</span>
             <span class="summary-value" id="sumGender">-</span>
           </div>
           <div class="summary-item grid-span-2">
-            <span class="summary-label">User Email / Login ID</span>
+            <span class="summary-label">Sync Authentication Email / ID</span>
             <span class="summary-value" id="sumEmail">-</span>
           </div>
         </div>
       </div>
-
-      <button type="button" class="secondary-btn" id="resetBtn">
-        <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
-        <span>Register Another Node</span>
-      </button>
+      <div class="success-actions">
+        <button type="button" class="secondary-btn" id="resetBtn">
+          <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
+          <span>Re-Initialize Module</span>
+        </button>
+        <button type="button" class="submit-btn" style="width: auto; box-shadow: none;" onclick="alert('Access Console token copied to clipboard!')">
+          <i data-lucide="external-link" style="width: 16px; height: 16px;"></i>
+          <span>Connect Sandbox terminal</span>
+        </button>
+      </div>
     </div>
-
   </div>
-
   <script>
     // Initialize Lucide SVG Icons
     lucide.createIcons();
-
     // DOM Elements
     const regForm = document.getElementById('regForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -969,19 +1239,19 @@
     const btnText = document.getElementById('btnText');
     const toggleSecurityMode = document.getElementById('toggleSecurityMode');
     const toggleStatusLabel = document.getElementById('toggleStatusLabel');
-
+    const audioToggleBtn = document.getElementById('audioToggle');
     const formPanel = document.getElementById('formPanel');
     const successPanel = document.getElementById('successPanel');
+    const interactiveHub = document.getElementById('interactiveHub');
     const mainContainer = document.getElementById('mainContainer');
-
     const consoleLogArea = document.getElementById('consoleLogArea');
     const liveConsole = document.getElementById('liveConsole');
-
     const sumFullName = document.getElementById('sumFullName');
     const sumGender = document.getElementById('sumGender');
     const sumEmail = document.getElementById('sumEmail');
+    const sumEnv = document.getElementById('sumEnv');
+    const sumLimits = document.getElementById('sumLimits');
     const resetBtn = document.getElementById('resetBtn');
-
     // Form inputs
     const firstname = document.getElementById('firstname');
     const middlename = document.getElementById('middlename');
@@ -989,29 +1259,105 @@
     const email = document.getElementById('email');
     const genderRadios = document.getElementsByName('gender');
     const genderCards = document.querySelectorAll('.gender-card');
-
+    const environmentSelect = document.getElementById('environment');
+    const nodeSelect = document.getElementById('node');
+    const cpuRangeInput = document.getElementById('cpuRange');
+    const ramRangeInput = document.getElementById('ramRange');
+    // Slider Text values
+    const cpuValLabel = document.getElementById('cpuVal');
+    const ramValLabel = document.getElementById('ramVal');
+    // Visual Meter Elements
+    const cpuMeterText = document.getElementById('cpuMeterText');
+    const cpuMeterBar = document.getElementById('cpuMeterBar');
+    const ramMeterText = document.getElementById('ramMeterText');
+    const ramMeterBar = document.getElementById('ramMeterBar');
+    const envWeightText = document.getElementById('envWeightText');
+    const envWeightBar = document.getElementById('envWeightBar');
+    // Realtime Code Preview element
+    const jsonPreview = document.getElementById('jsonPreview');
     // Input wrapper groupings for validation feedback classes
     const fnWrapper = document.getElementById('fnWrapper');
     const mnWrapper = document.getElementById('mnWrapper');
     const lnWrapper = document.getElementById('lnWrapper');
     const emWrapper = document.getElementById('emWrapper');
-
+    // Labels/Status Indicators
+    const fnStatus = document.getElementById('fnStatus');
+    const lnStatus = document.getElementById('lnStatus');
+    const emStatus = document.getElementById('emStatus');
     // Track state of inputs validation
     const formFields = {
-      firstname: { element: firstname, wrapper: fnWrapper, valid: false, required: true },
-      lastname: { element: lastname, wrapper: lnWrapper, valid: false, required: true },
-      email: { element: email, wrapper: emWrapper, valid: false, required: true },
+      firstname: { element: firstname, wrapper: fnWrapper, statusEl: fnStatus, valid: false, required: true },
+      lastname: { element: lastname, wrapper: lnWrapper, statusEl: lnStatus, valid: false, required: true },
+      email: { element: email, wrapper: emWrapper, statusEl: emStatus, valid: false, required: true },
     };
-
+    // --- Web Audio Synthesizer Cues (WOW Physicality Effect) ---
+    let audioEnabled = false;
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+    function playTone(freq, type, duration, volume) {
+      if (!audioEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.type = type;
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn("Audio failure:", e);
+      }
+    }
+    // Interactive Audio Blips
+    const playHover = () => playTone(600, 'triangle', 0.08, 0.03);
+    const playClick = () => playTone(800, 'sine', 0.1, 0.05);
+    const playFocus = () => playTone(450, 'sine', 0.12, 0.03);
+    const playSuccessTone = () => {
+      playTone(523.25, 'sine', 0.15, 0.06); // C5
+      setTimeout(() => playTone(659.25, 'sine', 0.15, 0.06), 100); // E5
+      setTimeout(() => playTone(783.99, 'sine', 0.25, 0.08), 200); // G5
+    };
+    const playErrorTone = () => {
+      playTone(180, 'sawtooth', 0.2, 0.08);
+      setTimeout(() => playTone(150, 'sawtooth', 0.2, 0.08), 80);
+    };
+    // Toggle Audio Event
+    audioToggleBtn.addEventListener('click', () => {
+      audioEnabled = !audioEnabled;
+      const icon = audioToggleBtn.querySelector('i');
+      if (audioEnabled) {
+        audioToggleBtn.style.color = 'var(--secondary)';
+        audioToggleBtn.style.borderColor = 'rgba(6, 182, 212, 0.4)';
+        audioToggleBtn.style.background = 'rgba(6, 182, 212, 0.1)';
+        audioToggleBtn.innerHTML = '<i data-lucide="volume-2"></i>';
+        lucide.createIcons();
+        playSuccessTone();
+      } else {
+        audioToggleBtn.removeAttribute('style');
+        audioToggleBtn.innerHTML = '<i data-lucide="volume-x"></i>';
+        lucide.createIcons();
+      }
+    });
     // Helper: Verify Email format regex
     function isValidEmail(val) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(val);
     }
-
     // Gender Custom Radio click handler
     genderCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        if (!card.classList.contains('selected')) playHover();
+      });
       card.addEventListener('click', function() {
+        playClick();
         // Unselect all cards
         genderCards.forEach(c => c.classList.remove('selected'));
         // Select this one
@@ -1023,9 +1369,9 @@
         
         // Validate form
         validateForm();
+        updateJsonPreview();
       });
     });
-
     // Form Validation Checker
     function validateForm() {
       // Validate Firstname
@@ -1033,80 +1379,189 @@
         formFields.firstname.valid = true;
         fnWrapper.classList.add('valid');
         fnWrapper.classList.remove('invalid');
+        fnStatus.innerText = 'OK';
+        fnStatus.className = 'field-status valid';
       } else {
         formFields.firstname.valid = false;
         if(fnWrapper.classList.contains('touched')) {
           fnWrapper.classList.add('invalid');
           fnWrapper.classList.remove('valid');
+          fnStatus.innerText = 'Required';
+          fnStatus.className = 'field-status invalid';
+        } else {
+          fnStatus.innerText = '';
         }
       }
-
       // Validate Lastname
       if (lastname.value.trim().length > 0) {
         formFields.lastname.valid = true;
         lnWrapper.classList.add('valid');
         lnWrapper.classList.remove('invalid');
+        lnStatus.innerText = 'OK';
+        lnStatus.className = 'field-status valid';
       } else {
         formFields.lastname.valid = false;
         if(lnWrapper.classList.contains('touched')) {
           lnWrapper.classList.add('invalid');
           lnWrapper.classList.remove('valid');
+          lnStatus.innerText = 'Required';
+          lnStatus.className = 'field-status invalid';
+        } else {
+          lnStatus.innerText = '';
         }
       }
-
       // Validate Email
       if (isValidEmail(email.value.trim())) {
         formFields.email.valid = true;
         emWrapper.classList.add('valid');
         emWrapper.classList.remove('invalid');
+        emStatus.innerText = 'OK';
+        emStatus.className = 'field-status valid';
       } else {
         formFields.email.valid = false;
         if(emWrapper.classList.contains('touched')) {
           emWrapper.classList.add('invalid');
           emWrapper.classList.remove('valid');
+          emStatus.innerText = 'Invalid Address';
+          emStatus.className = 'field-status invalid';
+        } else {
+          emStatus.innerText = '';
         }
       }
-
       // Validate Gender choice
       let genderSelected = false;
-      let genderVal = '';
       for (const radio of genderRadios) {
         if (radio.checked) {
           genderSelected = true;
+          break;
+        }
+      }
+      const allInputsValid = formFields.firstname.valid && formFields.lastname.valid && formFields.email.valid && genderSelected;
+      // Handle the button disabling based on the active Security Mode
+      if (toggleSecurityMode.checked) {
+        submitBtn.disabled = !allInputsValid;
+      } else {
+        submitBtn.disabled = false;
+      }
+      return allInputsValid;
+    }
+    // Update Realtime JSON Preview in terminal panel
+    function updateJsonPreview() {
+      let genderVal = null;
+      for (const radio of genderRadios) {
+        if (radio.checked) {
           genderVal = radio.value;
           break;
         }
       }
-
-      const allInputsValid = formFields.firstname.valid && formFields.lastname.valid && formFields.email.valid && genderSelected;
-
-      // Handle the button disabling based on the active Security Mode
-      if (toggleSecurityMode.checked) {
-        // Disabling mode ON: disable if anything is invalid
-        submitBtn.disabled = !allInputsValid;
-      } else {
-        // Disabling mode OFF: button is always enabled to allow HTML5 constraint popups
-        submitBtn.disabled = false;
-      }
-
-      return allInputsValid;
+      const payload = {
+        "identity": {
+          "firstname": firstname.value || null,
+          "middlename": middlename.value || null,
+          "lastname": lastname.value || null,
+          "gender": genderVal
+        },
+        "target_cluster": {
+          "node_id": nodeSelect.value,
+          "namespace": environmentSelect.value.toLowerCase()
+        },
+        "resource_allocation": {
+          "cpu_cores": parseInt(cpuRangeInput.value),
+          "memory_limit_gb": parseInt(ramRangeInput.value)
+        },
+        "security": {
+          "strict_ui_validations": toggleSecurityMode.checked
+        }
+      };
+      // Colorize the JSON representation for full high-tech dashboard vibes
+      const jsonStr = JSON.stringify(payload, null, 2);
+      
+      const syntaxHighlighted = jsonStr
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, function (match) {
+          let cls = 'json-number';
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+              cls = 'json-key';
+            } else {
+              cls = 'json-string';
+            }
+          } else if (/true|false/.test(match)) {
+            cls = 'json-string';
+          } else if (/null/.test(match)) {
+            cls = 'json-dark';
+          }
+          return `<span class="${cls}">${match}</span>`;
+        });
+      jsonPreview.innerHTML = syntaxHighlighted;
     }
-
     // Input Validation triggers (touched tracking)
     [firstname, lastname, email].forEach(input => {
       input.addEventListener('input', () => {
         validateForm();
+        updateJsonPreview();
       });
-
+      input.addEventListener('focus', () => {
+        playFocus();
+      });
       input.addEventListener('blur', function() {
         const wrapper = this.parentElement;
         wrapper.classList.add('touched');
         validateForm();
       });
     });
-
+    [middlename, environmentSelect, nodeSelect].forEach(input => {
+      input.addEventListener('input', () => {
+        updateJsonPreview();
+      });
+      input.addEventListener('focus', () => {
+        playFocus();
+      });
+    });
+    // Handle range slider real-time label values
+    cpuRangeInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      cpuValLabel.innerText = `${val} Core${val > 1 ? 's' : ''}`;
+      
+      // Update sidebar visual quota meters
+      const percentage = (val / 8) * 100;
+      cpuMeterBar.style.width = `${percentage}%`;
+      cpuMeterText.innerText = `${Math.round(percentage)}% (${val} / 8 Cores)`;
+      
+      updateJsonPreview();
+    });
+    ramRangeInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      ramValLabel.innerText = `${val} GB`;
+      
+      // Update sidebar visual quota meters
+      const percentage = (val / 16) * 100;
+      ramMeterBar.style.width = `${percentage}%`;
+      ramMeterText.innerText = `${Math.round(percentage)}% (${val} / 16 GB)`;
+      
+      updateJsonPreview();
+    });
+    // Target Environment Weight Adjuster
+    environmentSelect.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val === 'Development') {
+        envWeightText.innerText = 'Standard (dev)';
+        envWeightBar.style.width = '30%';
+        envWeightBar.style.background = 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)';
+      } else if (val === 'Staging') {
+        envWeightText.innerText = 'Heavy (stage)';
+        envWeightBar.style.width = '65%';
+        envWeightBar.style.background = 'linear-gradient(90deg, var(--secondary) 0%, var(--warn) 100%)';
+      } else {
+        envWeightText.innerText = 'Critical (prod)';
+        envWeightBar.style.width = '100%';
+        envWeightBar.style.background = 'linear-gradient(90deg, var(--warn) 0%, var(--error) 100%)';
+      }
+      updateJsonPreview();
+    });
     // Toggle Button Security mode change listener
     toggleSecurityMode.addEventListener('change', function() {
+      playClick();
       if (this.checked) {
         toggleStatusLabel.innerText = "ON";
         toggleStatusLabel.classList.add('active');
@@ -1115,8 +1570,8 @@
         toggleStatusLabel.classList.remove('active');
       }
       validateForm();
+      updateJsonPreview();
     });
-
     // Live terminal line printer
     function addConsoleLine(text, tag = 'info', delay = 0) {
       return new Promise(resolve => {
@@ -1131,11 +1586,14 @@
           if (tag === 'success') {
             tagClass = 'tag-success';
             tagText = '[OK]  ';
+            playTone(880, 'sine', 0.05, 0.05);
           } else if (tag === 'warn') {
             tagClass = 'tag-warn';
             tagText = '[WARN]';
+            playTone(400, 'triangle', 0.1, 0.05);
+          } else {
+            playTone(550, 'triangle', 0.04, 0.03);
           }
-
           line.innerHTML = `
             <span class="line-timestamp">[${timestamp}]</span>
             <span class="line-tag ${tagClass}">${tagText}</span>
@@ -1149,33 +1607,29 @@
             line.classList.add('active');
             liveConsole.scrollTop = liveConsole.scrollHeight;
           }, 20);
-
           resolve();
         }, delay);
       });
     }
-
     // Submit handler
     regForm.addEventListener('submit', async function(e) {
       e.preventDefault();
-
       // Run check
       const isValid = validateForm();
       if (!isValid) {
-        // If security mode was OFF, standard HTML5 constraints will automatically trigger here if field elements are not valid.
-        // We report validation explicitly just in case:
+        playErrorTone();
+        // If security mode was OFF, standard HTML5 constraints will trigger
         if (!firstname.value) firstname.reportValidity();
         else if (!lastname.value) lastname.reportValidity();
         else if (!email.value) email.reportValidity();
         return;
       }
-
+      playClick();
       // Start beautiful submission animation
       submitBtn.disabled = true;
       btnSpinner.style.display = 'block';
       btnIcon.style.display = 'none';
-      btnText.innerText = "Deploying Node...";
-
+      btnText.innerText = "Deploying Pods...";
       // Gather form inputs
       const fName = firstname.value.trim();
       const mName = middlename.value.trim();
@@ -1190,37 +1644,39 @@
           break;
         }
       }
-
       // Populate Success Summary cards
       sumFullName.innerText = fullName;
       sumGender.innerText = genderVal;
       sumEmail.innerText = emailAddress;
-
+      sumEnv.innerText = environmentSelect.value;
+      sumLimits.innerText = `${cpuRangeInput.value} CPU / ${ramRangeInput.value}GB RAM`;
       // Simulate network request/compilation
       setTimeout(async () => {
         // Transition screens
         formPanel.style.display = 'none';
+        interactiveHub.style.display = 'none';
         successPanel.style.display = 'flex';
+        mainContainer.classList.add('success-mode');
         
+        playSuccessTone();
         // Dynamic Terminal Script
         consoleLogArea.innerHTML = ''; // clear log
-        await addConsoleLine("Initializing DevOps compilation payload...", "info", 200);
-        await addConsoleLine("Securing handshake with API node [01]...", "info", 500);
-        await addConsoleLine("Verifying credential unique constraints...", "info", 400);
-        await addConsoleLine(`Found record identity: ${fName.toLowerCase()}.${lName.toLowerCase()}`, "info", 300);
-        await addConsoleLine(`Generating authentication token for ${emailAddress}...`, "info", 600);
-        await addConsoleLine("Container sandbox environment initialized successfully.", "success", 400);
-        await addConsoleLine("Mounting host namespaces and persistent volume chains...", "info", 500);
-        await addConsoleLine("Routing internal ingress routes for developer domain...", "info", 400);
-        await addConsoleLine("Build verification phase: SUCCESS.", "success", 300);
-        
-        // Final success status ping
-        await addConsoleLine("Profile successfully synchronized into cluster active directory.", "success", 400);
-      }, 1000);
+        await addConsoleLine("Syncing payload signature with Cluster API Ingress...", "info", 100);
+        await addConsoleLine(`Validating token parameters for ${emailAddress}...`, "info", 300);
+        await addConsoleLine("Connecting target Kubernetes API node target...", "info", 200);
+        await addConsoleLine(`Binding virtual space usr-${fName.toLowerCase()}-${lName.toLowerCase()}`, "info", 250);
+        await addConsoleLine(`Node limits: CPU Cores = ${cpuRangeInput.value}, RAM = ${ramRangeInput.value}GB`, "warn", 350);
+        await addConsoleLine("Namespace resources allocation configuration: OK.", "success", 200);
+        await addConsoleLine("Generating cryptographic kubeconfig parameters...", "info", 400);
+        await addConsoleLine("Deploying system security ingress controller pods...", "info", 300);
+        await addConsoleLine("Routing API subdomains config validation checks...", "info", 250);
+        await addConsoleLine("Build verification phase completed: Namespace ready.", "success", 200);
+        await addConsoleLine("DevOps profile deployment synchronization: SUCCESS.", "success", 300);
+      }, 1200);
     });
-
     // Reset button handler
     resetBtn.addEventListener('click', function() {
+      playClick();
       // Reset inputs & classes
       regForm.reset();
       
@@ -1228,23 +1684,104 @@
       [fnWrapper, mnWrapper, lnWrapper, emWrapper].forEach(w => {
         w.classList.remove('touched', 'valid', 'invalid');
       });
-
+      [fnStatus, lnStatus, emStatus].forEach(s => {
+        s.innerText = '';
+        s.className = 'field-status';
+      });
+      // Reset Range outputs
+      cpuValLabel.innerText = "2 Cores";
+      ramValLabel.innerText = "4 GB";
+      cpuMeterBar.style.width = "25%";
+      cpuMeterText.innerText = "25% (2 / 8 Cores)";
+      ramMeterBar.style.width = "25%";
+      ramMeterText.innerText = "25% (4 / 16 GB)";
+      envWeightText.innerText = "Standard (dev)";
+      envWeightBar.style.width = "30%";
+      envWeightBar.style.background = 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)';
       // Restore submit button state
       submitBtn.disabled = true;
       btnSpinner.style.display = 'none';
       btnIcon.style.display = 'block';
-      btnText.innerText = "Submit Form";
-
+      btnText.innerText = "Deploy Pod Resources";
       // Transition screens back
       successPanel.style.display = 'none';
       formPanel.style.display = 'block';
+      interactiveHub.style.display = 'flex';
+      mainContainer.classList.remove('success-mode');
       
       // Re-run validation setup
       validateForm();
+      updateJsonPreview();
     });
-
-    // Initial validation check on load
+    // --- Canvas Particle Engine (Background WOW animation) ---
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const maxParticles = 65;
+    const maxDistance = 110;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = (Math.random() - 0.5) * 0.45;
+        this.radius = Math.random() * 2 + 1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(99, 102, 241, 0.4)';
+        ctx.fill();
+      }
+    }
+    // Initialize particles
+    for (let i = 0; i < maxParticles; i++) {
+      particles.push(new Particle());
+    }
+    // Animation Loop
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Update and draw particles
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < maxDistance) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            const alpha = (1 - dist / maxDistance) * 0.15;
+            ctx.strokeStyle = `rgba(6, 182, 212, ${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+    // Initial setup
     validateForm();
+    updateJsonPreview();
   </script>
 </body>
 </html>

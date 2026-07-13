@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HiCode Cafe - Home</title>
+  <!-- Google Fonts for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #120c08;
+      --bg-card: rgba(28, 20, 15, 0.6);
+      --bg-card-hover: rgba(43, 31, 23, 0.85);
+      --accent-gold: #e5ba73;
+      --accent-gold-glow: rgba(229, 186, 115, 0.3);
+      --accent-brown: #c58940;
+      --text-main: #f5efe6;
+      --text-muted: #c2b8b0;
+      --success-green: #4ade80;
+      --alb-blue: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #18100c 0%, #0d0805 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    /* Ambient background light glows */
+    .glow-blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(197, 137, 64, 0.15) 0%, rgba(0,0,0,0) 70%);
+      top: 10%;
+      left: 10%;
+      z-index: -1;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .glow-blob-2 {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0,0,0,0) 70%);
+      bottom: 10%;
+      right: 5%;
+      z-index: -1;
+      filter: blur(50px);
+      pointer-events: none;
+    }
+
+    /* Header & ALB Inspector Bar */
+    .alb-inspector {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 15px 25px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .alb-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alb-badge {
+      background: var(--alb-blue);
+      color: #0f172a;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .alb-diagram {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .diagram-node {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .diagram-node.active {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+      box-shadow: 0 0 10px rgba(229, 186, 115, 0.15);
+    }
+
+    .diagram-arrow {
+      color: var(--accent-brown);
+      font-weight: bold;
+      animation: pulse-arrow 1.5s infinite;
+    }
+
+    @keyframes pulse-arrow {
+      0% { opacity: 0.3; transform: translateX(-3px); }
+      50% { opacity: 1; transform: translateX(3px); }
+      100% { opacity: 0.3; transform: translateX(-3px); }
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    /* Hero Section */
+    .hero-header {
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    /* Steam Coffee cup animation */
+    .coffee-animation {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px;
+    }
+
+    .cup {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 45px;
+      background-color: var(--accent-gold);
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    .cup-handle {
+      position: absolute;
+      right: 12px;
+      top: 15px;
+      width: 15px;
+      height: 25px;
+      border: 5px solid var(--accent-gold);
+      border-left: none;
+      border-radius: 0 25px 25px 0;
+    }
+
+    .plate {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 8px;
+      background: var(--text-muted);
+      border-radius: 4px;
+    }
+
+    .steam-container {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .steam {
+      width: 4px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: rise 2.5s infinite linear;
+      filter: blur(1px);
+    }
+
+    .steam:nth-child(1) { animation-delay: 0.2s; }
+    .steam:nth-child(2) { animation-delay: 0.8s; }
+    .steam:nth-child(3) { animation-delay: 1.4s; }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(15px) scaleX(1);
+        opacity: 0;
+      }
+      50% {
+        transform: translateY(-5px) scaleX(1.5);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-25px) scaleX(0.8);
+        opacity: 0;
+      }
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    h1 span {
+      color: var(--accent-gold);
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--accent-gold);
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+      border-bottom: 1px dashed rgba(229, 186, 115, 0.25);
+      padding-bottom: 20px;
+    }
+
+    /* Options Cards Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      width: 100%;
+      margin: 40px 0;
+    }
+
+    @media (max-width: 640px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 35px 25px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(229, 186, 115, 0.05) 0%, rgba(0,0,0,0) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      background: var(--bg-card-hover);
+      border-color: rgba(229, 186, 115, 0.25);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(229, 186, 115, 0.05);
+    }
+
+    .service-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.4s ease;
+    }
+
+    .service-card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+      background: rgba(229, 186, 115, 0.1);
+      border-color: rgba(229, 186, 115, 0.3);
+    }
+
+    .service-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .service-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 25px;
+      max-width: 250px;
+    }
+
+    .card-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover .card-btn {
+      background: var(--accent-gold);
+      color: #120c08;
+      border-color: var(--accent-gold);
+      box-shadow: 0 5px 15px var(--accent-gold-glow);
+    }
+
+    /* Footer Meta / Load Balancer Info */
+    .metadata-footer {
+      width: 100%;
+      background: rgba(28, 20, 15, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success-green);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--success-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--success-green); }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    .badge-route {
+      background: rgba(229, 186, 115, 0.1);
+      color: var(--accent-gold);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Effects -->
+  <div class="glow-blob"></div>
+  <div class="glow-blob-2"></div>
+
+  <!-- ALB Traffic Inspector Header -->
+  <div class="alb-inspector">
+    <div class="alb-logo">
+      <span class="alb-badge">AWS ALB</span>
+      <span style="font-weight: 600; font-size: 0.95rem; color: #fff;">Path Router</span>
+    </div>
+    
+    <div class="alb-diagram">
+      <div class="diagram-node">💻 Client</div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-node active">⚙️ ALB Listener (Port 80)</div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-node active" style="border-color: var(--alb-blue); color: var(--alb-blue);">🎯 TG: Cafe-Main-TG</div>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Hero Header -->
+    <header class="hero-header">
+      <div class="coffee-animation">
+        <div class="steam-container">
+          <div class="steam"></div>
+          <div class="steam"></div>
+          <div class="steam"></div>
+        </div>
+        <div class="cup">
+          <div class="cup-handle"></div>
+        </div>
+        <div class="plate"></div>
+      </div>
+      
+      <h1>HiCode <span>Cafe</span></h1>
+      <p class="tagline">Sip the coffee, sharpen the skills, automate, deploy the future.</p>
+    </header>
+
+    <!-- Navigation Choices -->
+    <section class="services-grid">
+      
+      <!-- Orders Link -->
+      <a href="/order" class="service-card">
+        <div class="card-icon">📦</div>
+        <div>
+          <h2>Order Service</h2>
+          <p>Browse our barista specials, gourmet cookies & hot breakfast options.</p>
+        </div>
+        <div class="card-btn">
+          Go to Orders <span>➔</span>
+        </div>
+      </a>
+
+      <!-- Payments Link -->
+      <a href="/payment" class="service-card">
+        <div class="card-icon">💳</div>
+        <div>
+          <h2>Payment Service</h2>
+          <p>Seamless bill settlement via cards, net banking, or instant UPI portals.</p>
+        </div>
+        <div class="card-btn">
+          Go to Payments <span>➔</span>
+        </div>
+      </a>
+
+    </section>
+
+    <!-- ALB Demo Rules Footer Info -->
+    <footer class="metadata-footer">
+      <div class="meta-item">
+        <span class="pulse-dot"></span>
+        <span>Status: <b>Active</b></span>
+      </div>
+      <div class="meta-item">
+        <span>Route Matched: <span class="badge-route">Default (/*)</span></span>
+      </div>
+      <div class="meta-item">
+        <span>Backend Source: <b style="color: var(--success-green);">Instance-1 (Root Server)</b></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Dynamically retrieve client metadata to prove Load Balancer routing dynamics
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("ALB Path Routing Demo Loaded - Default Route Active.");
+    });
+  </script>
+
+</body>
+</html>

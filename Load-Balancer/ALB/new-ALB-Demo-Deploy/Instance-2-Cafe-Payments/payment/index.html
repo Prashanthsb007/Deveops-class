@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HiCode Cafe - Payment checkout</title>
+  <!-- Google Fonts for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #090b14;
+      --bg-card: rgba(18, 22, 38, 0.6);
+      --bg-card-hover: rgba(26, 32, 54, 0.85);
+      --accent-purple: #9d4edd;
+      --accent-purple-glow: rgba(157, 78, 221, 0.3);
+      --accent-blue: #3a86c8;
+      --text-main: #f3f4f6;
+      --text-muted: #9fa6b2;
+      --success-green: #4ade80;
+      --alb-blue: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #090e1a 0%, #04060b 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    /* Ambient background light glows */
+    .glow-blob {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(157, 78, 221, 0.12) 0%, rgba(0,0,0,0) 70%);
+      top: 5%;
+      left: 10%;
+      z-index: -1;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .glow-blob-2 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(0,0,0,0) 70%);
+      bottom: 10%;
+      right: 10%;
+      z-index: -1;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    /* Header & ALB Inspector Bar */
+    .alb-inspector {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 15px 25px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .alb-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alb-badge {
+      background: var(--alb-blue);
+      color: #0f172a;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .alb-diagram {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .diagram-node {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .diagram-node.active {
+      border-color: var(--alb-blue);
+      color: var(--alb-blue);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+
+    .diagram-arrow {
+      color: var(--alb-blue);
+      font-weight: bold;
+      animation: pulse-arrow 1.5s infinite;
+    }
+
+    @keyframes pulse-arrow {
+      0% { opacity: 0.3; transform: translateX(-3px); }
+      50% { opacity: 1; transform: translateX(3px); }
+      100% { opacity: 0.3; transform: translateX(-3px); }
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 900px;
+      z-index: 10;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .nav-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--alb-blue);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    h1 span {
+      color: var(--alb-blue);
+    }
+
+    .tagline {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    /* Checkout Layout split screen */
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Method Selector Section */
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .method-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+
+    .method-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(56, 189, 248, 0.2);
+    }
+
+    .method-card.active {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: var(--alb-blue);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+    }
+
+    .method-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .method-icon {
+      font-size: 1.8rem;
+      background: rgba(255, 255, 255, 0.03);
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .method-card.active .method-icon {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--alb-blue);
+    }
+
+    .method-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .method-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .selector-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .method-card.active .selector-dot {
+      border-color: var(--alb-blue);
+    }
+
+    .method-card.active .selector-dot::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--alb-blue);
+      border-radius: 50%;
+    }
+
+    /* Checkout Card Details Form & Interactive Credit Card */
+    .checkout-form {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Holographic Interactive Credit Card Mock */
+    .card-mock {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+      border-radius: 12px;
+      padding: 20px;
+      aspect-ratio: 1.586;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+
+    .card-mock::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255,255,255,0) 80%);
+      top: -50px;
+      left: -50px;
+      pointer-events: none;
+    }
+
+    .card-chip {
+      width: 40px;
+      height: 30px;
+      background: linear-gradient(135deg, #ffd700 0%, #e5ba73 100%);
+      border-radius: 6px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    .card-number {
+      font-size: 1.35rem;
+      letter-spacing: 2px;
+      word-spacing: 5px;
+      font-family: monospace;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+      margin: 15px 0;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 2px;
+    }
+
+    .card-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* Inputs fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--alb-blue);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .pay-now-btn {
+      background: var(--alb-blue);
+      color: #090b14;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .pay-now-btn:hover {
+      background: #7dd3fc;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Success payment pop-up simulation */
+    .success-alert {
+      display: none;
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: var(--success-green);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 10px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ALB Demo Rules Footer Info */
+    .metadata-footer {
+      width: 100%;
+      background: rgba(18, 22, 38, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--alb-blue);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--alb-blue);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--alb-blue); }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    .badge-route {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--alb-blue);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Effects -->
+  <div class="glow-blob"></div>
+  <div class="glow-blob-2"></div>
+
+  <!-- ALB Traffic Inspector Header -->
+  <div class="alb-inspector">
+    <div class="alb-logo">
+      <span class="alb-badge">AWS ALB</span>
+      <span style="font-weight: 600; font-size: 0.95rem; color: #fff;">Path Router</span>
+    </div>
+    
+    <div class="alb-diagram">
+      <div class="diagram-node">💻 Client</div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-node active">⚙️ Route Path Match</div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-node active" style="border-color: var(--alb-blue); color: var(--alb-blue);">🎯 TG: Cafe-Payments-TG</div>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <h1>HiCode Cafe – <span>Payment</span></h1>
+      <p class="tagline">Settle your coffee order fast and securely via micro-payment nodes</p>
+      
+      <!-- Back Links -->
+      <div class="nav-links">
+        <a href="/" class="nav-btn">☕ Home (Default Router)</a>
+        <a href="/order" class="nav-btn">📦 Go back to Orders</a>
+      </div>
+    </header>
+
+    <!-- Interactive Checkout Grid -->
+    <section class="checkout-layout">
+      
+      <!-- Left: Methods Selectors -->
+      <div class="payment-methods">
+        
+        <!-- Cards -->
+        <div class="method-card active" onclick="selectMethod(this, 'card')">
+          <div class="method-info">
+            <div class="method-icon">💳</div>
+            <div>
+              <div class="method-title">Debit / Credit Card</div>
+              <div class="method-desc">Visa, MasterCard, RuPay accepted</div>
+            </div>
+          </div>
+          <div class="selector-dot"></div>
+        </div>
+
+        <!-- Google Pay -->
+        <div class="method-card" onclick="selectMethod(this, 'gpay')">
+          <div class="method-info">
+            <div class="method-icon">🔍</div>
+            <div>
+              <div class="method-title">Google Pay</div>
+              <div class="method-desc">Pay directly from Google Account wallet</div>
+            </div>
+          </div>
+          <div class="selector-dot"></div>
+        </div>
+
+        <!-- PhonePe -->
+        <div class="method-card" onclick="selectMethod(this, 'phonepe')">
+          <div class="method-info">
+            <div class="method-icon">📱</div>
+            <div>
+              <div class="method-title">PhonePe</div>
+              <div class="method-desc">Instant bank transfer with PhonePe UPI</div>
+            </div>
+          </div>
+          <div class="selector-dot"></div>
+        </div>
+
+        <!-- BHIM UPI -->
+        <div class="method-card" onclick="selectMethod(this, 'bhim')">
+          <div class="method-info">
+            <div class="method-icon">⚡</div>
+            <div>
+              <div class="method-title">BHIM UPI Gateway</div>
+              <div class="method-desc">Pay using your standard UPI ID link</div>
+            </div>
+          </div>
+          <div class="selector-dot"></div>
+        </div>
+
+        <!-- Cash Payment -->
+        <div class="method-card" onclick="selectMethod(this, 'cash')">
+          <div class="method-info">
+            <div class="method-icon">💵</div>
+            <div>
+              <div class="method-title">Cash Payment Counter</div>
+              <div class="method-desc">Generate token & settle at barista billing desk</div>
+            </div>
+          </div>
+          <div class="selector-dot"></div>
+        </div>
+
+      </div>
+
+      <!-- Right: Interactive Checkout Details Form -->
+      <div class="checkout-form">
+        
+        <!-- Live credit card mock visual -->
+        <div class="card-mock" id="cardMock">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="card-chip"></div>
+            <span style="font-style: italic; font-weight: 800; color: #fff;">PayNode</span>
+          </div>
+          <div class="card-number" id="cardNumMock">•••• •••• •••• 4242</div>
+          <div class="card-bottom">
+            <div>
+              <div class="card-label">Card Holder</div>
+              <div class="card-value" id="cardNameMock">YOUR NAME</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="card-label">Expires</div>
+              <div class="card-value" id="cardExpMock">09/29</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Form Fields -->
+        <div id="methodFormContent">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Cardholder Name</label>
+            <input type="text" class="form-input" id="cardNameInput" value="Prashanth SB" oninput="updateCardMock()">
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Card Number</label>
+            <input type="text" class="form-input" id="cardNumInput" value="4321 8765 2468 4242" oninput="updateCardMock()">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Expiry Date</label>
+              <input type="text" class="form-input" id="cardExpInput" value="12/30" oninput="updateCardMock()">
+            </div>
+            <div class="form-group">
+              <label>CVV / CVC</label>
+              <input type="password" class="form-input" placeholder="•••" value="123">
+            </div>
+          </div>
+        </div>
+
+        <button class="pay-now-btn" onclick="submitPayment()">
+          <span>🔒 Verify & Pay Bills</span>
+        </button>
+
+        <div class="success-alert" id="successMsg">
+          ✔ Payment Simulation Successful! Order routed to barista queue.
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ALB Rules Footer Info -->
+    <footer class="metadata-footer">
+      <div class="meta-item">
+        <span class="pulse-dot"></span>
+        <span>Target: <b>Cafe-Payments-TG</b></span>
+      </div>
+      <div class="meta-item">
+        <span>Route Pattern: <span class="badge-route">/payment*</span></span>
+      </div>
+      <div class="meta-item">
+        <span>Backend Server: <b style="color: var(--alb-blue);">Instance-2 (Payments Service App)</b></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    function selectMethod(element, type) {
+      document.querySelectorAll('.method-card').forEach(card => card.classList.remove('active'));
+      element.classList.add('active');
+      
+      const formContent = document.getElementById('methodFormContent');
+      const cardMock = document.getElementById('cardMock');
+      const successMsg = document.getElementById('successMsg');
+      successMsg.style.display = 'none';
+
+      if (type === 'card') {
+        cardMock.style.display = 'flex';
+        formContent.innerHTML = `
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Cardholder Name</label>
+            <input type="text" class="form-input" id="cardNameInput" value="Prashanth SB" oninput="updateCardMock()">
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Card Number</label>
+            <input type="text" class="form-input" id="cardNumInput" value="4321 8765 2468 4242" oninput="updateCardMock()">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Expiry Date</label>
+              <input type="text" class="form-input" id="cardExpInput" value="12/30" oninput="updateCardMock()">
+            </div>
+            <div class="form-group">
+              <label>CVV / CVC</label>
+              <input type="password" class="form-input" placeholder="•••" value="123">
+            </div>
+          </div>
+        `;
+        updateCardMock();
+      } else if (type === 'cash') {
+        cardMock.style.display = 'none';
+        formContent.innerHTML = `
+          <div style="text-align: center; padding: 20px 0; color: var(--text-muted);">
+            <p style="margin-bottom: 10px;">Select this to pay by cash at the coffee shop counters.</p>
+            <p><b>ALB Service Code:</b> <span class="badge-route">CASH_DESK_ROUTE</span></p>
+          </div>
+        `;
+      } else {
+        cardMock.style.display = 'none';
+        let methodNiceName = type === 'gpay' ? 'Google Pay App' : type === 'phonepe' ? 'PhonePe Wallet' : 'BHIM UPI Gateway';
+        formContent.innerHTML = `
+          <div class="form-group">
+            <label>Enter UPI ID / VPA Address</label>
+            <input type="text" class="form-input" placeholder="name@bankname" value="prashanth@paynode">
+            <p style="font-size:0.75rem; color: var(--text-muted); margin-top:8px;">A collect request will be pushed automatically to your ${methodNiceName}.</p>
+          </div>
+        `;
+      }
+    }
+
+    function updateCardMock() {
+      const name = document.getElementById('cardNameInput').value || 'YOUR NAME';
+      const num = document.getElementById('cardNumInput').value || '•••• •••• •••• ••••';
+      const exp = document.getElementById('cardExpInput').value || 'MM/YY';
+      
+      document.getElementById('cardNameMock').innerText = name.toUpperCase();
+      document.getElementById('cardNumMock').innerText = num;
+      document.getElementById('cardExpMock').innerText = exp;
+    }
+
+    function submitPayment() {
+      const successMsg = document.getElementById('successMsg');
+      successMsg.style.display = 'block';
+      setTimeout(() => {
+        successMsg.style.transform = 'scale(1.02)';
+        setTimeout(() => successMsg.style.transform = 'scale(1)', 100);
+      }, 50);
+    }
+  </script>
+
+</body>
+</html>
