@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Network Load Balancer (NLB) - Tomcat Node 8080</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Modern CSS Reset & Variable Design Tokens */
+    :root {
+      --bg-dark: #070913;
+      --bg-card: rgba(16, 22, 46, 0.6);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(79, 110, 247, 0.2);
+      
+      --color-primary: #4f6ef7;
+      --color-primary-glow: rgba(79, 110, 247, 0.4);
+      --color-secondary: #00f2fe;
+      --color-secondary-glow: rgba(0, 242, 254, 0.4);
+      --color-accent: #9d4edd;
+      --color-success: #00e676;
+      --color-success-glow: rgba(0, 230, 118, 0.35);
+      
+      --text-main: #f1f3fa;
+      --text-muted: #8b9bb4;
+      --text-highlight: #ffffff;
+      
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(79, 110, 247, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(157, 78, 221, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(0, 242, 254, 0.03) 0%, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Header Section */
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+      position: relative;
+    }
+
+    .badge-aws {
+      background: linear-gradient(135deg, #ff9900 0%, #ffb300 100%);
+      color: #000;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 70%, #00f2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      max-width: 700px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    /* Layout Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    @media (min-width: 992px) {
+      .dashboard-grid {
+        grid-template-columns: 3.5fr 2.5fr;
+      }
+    }
+
+    /* Card styling - Glassmorphism */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-secondary), transparent);
+      opacity: 0.5;
+    }
+
+    .glass-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 12px 40px 0 rgba(79, 110, 247, 0.15);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-highlight);
+    }
+
+    .card-title i {
+      color: var(--color-secondary);
+    }
+
+    /* Interactive NLB Visualizer Map */
+    .visualizer-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    .simulation-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn-control {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-smooth);
+      font-size: 0.9rem;
+    }
+
+    .btn-control:hover {
+      background: rgba(79, 110, 247, 0.1);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .btn-control.active-80 {
+      border-color: var(--color-accent);
+      background: rgba(157, 78, 221, 0.15);
+      box-shadow: 0 0 15px rgba(157, 78, 221, 0.2);
+    }
+
+    .btn-control.active-8080 {
+      border-color: var(--color-secondary);
+      background: rgba(0, 242, 254, 0.15);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+    }
+
+    /* Diagram Map Styling */
+    .routing-diagram {
+      background: rgba(7, 9, 19, 0.5);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .diagram-column {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+      z-index: 2;
+      position: relative;
+    }
+
+    .diagram-node {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      padding: 16px 20px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 140px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transition: var(--transition-smooth);
+    }
+
+    .diagram-node i {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #fff, #c7d2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .diagram-node.client i {
+      color: #94a3b8;
+    }
+
+    .diagram-node.nlb {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 20px rgba(79, 110, 247, 0.15);
+    }
+
+    .diagram-node.nlb i {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .diagram-node.server-80 {
+      border-color: var(--color-accent);
+    }
+
+    .diagram-node.server-80 i {
+      background: linear-gradient(135deg, #d8b4fe, var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .diagram-node.server-8080 {
+      border-color: var(--color-secondary);
+      background: rgba(0, 242, 254, 0.05);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+    }
+
+    .diagram-node.server-8080 i {
+      background: linear-gradient(135deg, #a5f3fc, var(--color-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .node-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-highlight);
+    }
+
+    .node-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Active Highlight States */
+    .diagram-node.active-route {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px var(--glow-color);
+      border-color: var(--route-color);
+    }
+
+    /* SVG Link Lines */
+    .diagram-links {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .diagram-links path {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 3;
+      stroke-linecap: round;
+      transition: var(--transition-smooth);
+    }
+
+    /* Animated Dot Flow */
+    .pulse-dot {
+      stroke-dasharray: 8, 12;
+      stroke-linecap: round;
+      animation: dash 1.5s linear infinite;
+      opacity: 0;
+      stroke-width: 4;
+      transition: opacity 0.3s ease;
+    }
+
+    .pulse-dot.active {
+      opacity: 1;
+    }
+
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+
+    /* Tomcat Monitor Control Panel (Right Column) */
+    .monitor-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.15);
+      animation: pulse-border 2s infinite;
+      align-self: flex-start;
+      margin-bottom: 12px;
+    }
+
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-val {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-highlight);
+    }
+
+    .metric-progress {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      width: 0%;
+      transition: width 1s ease;
+    }
+
+    /* Info Table comparing load balancers */
+    .compare-container {
+      margin-top: 40px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    .compare-table th, .compare-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .compare-table th {
+      background: rgba(255, 255, 255, 0.02);
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text-highlight);
+    }
+
+    .compare-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .tag-nlb {
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+
+    /* Explanation Grid */
+    .explanation-section {
+      margin-top: 40px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .info-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      transition: var(--transition-smooth);
+    }
+
+    .info-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .info-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: rgba(79, 110, 247, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--color-primary);
+      font-size: 1.3rem;
+      border: 1px solid rgba(79, 110, 247, 0.2);
+    }
+
+    .info-item:nth-child(2) .info-icon-wrapper {
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--color-secondary);
+      border-color: rgba(0, 242, 254, 0.2);
+    }
+
+    .info-item:nth-child(3) .info-icon-wrapper {
+      background: rgba(157, 78, 221, 0.1);
+      color: var(--color-accent);
+      border-color: rgba(157, 78, 221, 0.2);
+    }
+
+    .info-item h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      color: var(--text-highlight);
+    }
+
+    .info-item p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer p {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .footer-highlight {
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+
+    /* Tomcat Specific Style */
+    .tomcat-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(248, 152, 29, 0.1);
+      color: #F8981D;
+      border: 1px solid rgba(248, 152, 29, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="badge-aws">
+        <i class="fa-brands fa-aws"></i> AWS Network Load Balancer (NLB)
+      </div>
+      <h1>Port-Based Routing Environment</h1>
+      <p class="subtitle">This Tomcat page is serving traffic on <strong style="color: var(--color-secondary);">Port 8080</strong>, managed dynamically by the AWS NLB Layer 4 Target Group.</p>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Dynamic NLB Visualizer Diagram -->
+      <div class="glass-card">
+        <div class="visualizer-container">
+          <div>
+            <div class="card-title">
+              <i class="fa-solid fa-network-wired"></i>
+              NLB Load Balancer Traffic Router
+            </div>
+            
+            <!-- Controls to trigger routing simulation -->
+            <div class="simulation-controls">
+              <button class="btn-control" onclick="simulateRoute(80)">
+                <i class="fa-solid fa-play" style="color: var(--color-accent);"></i> Send Request to Port 80
+              </button>
+              <button class="btn-control" onclick="simulateRoute(8080)">
+                <i class="fa-solid fa-play" style="color: var(--color-secondary);"></i> Send Request to Port 8080
+              </button>
+              <button class="btn-control" onclick="resetSimulation()">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Routing Diagram (SVG + CSS) -->
+          <div class="routing-diagram">
+            
+            <!-- Client Column -->
+            <div class="diagram-column">
+              <div class="diagram-node client" id="node-client">
+                <i class="fa-solid fa-laptop-code"></i>
+                <div class="node-title">Client Browser</div>
+                <div class="node-subtitle">Request Source</div>
+              </div>
+            </div>
+
+            <!-- NLB Column -->
+            <div class="diagram-column">
+              <div class="diagram-node nlb" id="node-nlb">
+                <i class="fa-solid fa-circle-nodes"></i>
+                <div class="node-title">AWS NLB</div>
+                <div class="node-subtitle" id="nlb-subtitle">Listening...</div>
+              </div>
+            </div>
+
+            <!-- Target Servers Column -->
+            <div class="diagram-column">
+              <!-- Server 1: Apache Reg Form -->
+              <div class="diagram-node server-80" id="node-80">
+                <i class="fa-solid fa-server"></i>
+                <div class="node-title">Apache Webserver</div>
+                <div class="node-subtitle">Port 80 (Reg Form)</div>
+              </div>
+
+              <!-- Server 2: Tomcat (This server) -->
+              <div class="diagram-node server-8080" id="node-8080">
+                <i class="fa-solid fa-gears"></i>
+                <div class="node-title">Apache Tomcat</div>
+                <div class="node-subtitle">Port 8080 (This Node)</div>
+              </div>
+            </div>
+
+            <!-- SVG Lines -->
+            <svg class="diagram-links" id="diagram-links">
+              <!-- Background lines -->
+              <path d="" id="path-to-80-bg" />
+              <path d="" id="path-to-8080-bg" />
+              
+              <!-- Client to NLB links -->
+              <path d="" id="path-client-nlb" />
+
+              <!-- Animated pulse flows -->
+              <path d="" id="flow-to-80" class="pulse-dot" stroke="var(--color-accent)" />
+              <path d="" id="flow-to-8080" class="pulse-dot" stroke="var(--color-secondary)" />
+              <path d="" id="flow-client-nlb" class="pulse-dot" stroke="var(--color-primary)" />
+            </svg>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Tomcat Node 8080 Status Monitor -->
+      <div class="glass-card">
+        <div class="monitor-panel">
+          <div>
+            <div class="status-badge">
+              <i class="fa-solid fa-circle-dot"></i> Live Active Node
+            </div>
+            <div class="card-title" style="margin-bottom: 8px;">
+              <i class="fa-solid fa-gauge-high"></i> Tomcat-Node-02
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+              Listening on <code style="color: var(--color-secondary); font-weight: 600;">0.0.0.0:8080</code>. Handshaking TCP sessions forwarded directly by AWS NLB.
+            </p>
+          </div>
+
+          <!-- Dynamic Metrics Grid -->
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">CPU Load</div>
+              <div class="metric-val" id="val-cpu">0.0%</div>
+              <div class="metric-progress">
+                <div class="progress-bar" id="bar-cpu"></div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Memory Usage</div>
+              <div class="metric-val" id="val-ram">248 MB</div>
+              <div class="metric-progress">
+                <div class="progress-bar" id="bar-ram" style="width: 24.2%;"></div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Active Port</div>
+              <div class="metric-val" style="color: var(--color-secondary);">8080</div>
+              <span class="tomcat-logo" style="margin-top: 4px; align-self: flex-start;">
+                <i class="fa-solid fa-coffee" style="margin-right: 4px;"></i> Tomcat Web
+              </span>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Total Requests</div>
+              <div class="metric-val" id="val-requests" style="color: var(--color-success);">1,284</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Dynamic counter</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.015); border: 1px solid var(--border-color); padding: 16px; border-radius: 10px; margin-top: 10px;">
+            <h4 style="font-family: var(--font-display); font-size: 0.95rem; margin-bottom: 8px; color: var(--text-highlight);">
+              <i class="fa-solid fa-circle-info" style="color: var(--color-primary); margin-right: 6px;"></i> How routing is configured:
+            </h4>
+            <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+              <li><strong>Port 80 Listener:</strong> Directs public HTTP traffic to the Apache Target Group. Displays the registration form.</li>
+              <li><strong>Port 8080 Listener:</strong> Directs public TCP traffic directly to Apache Tomcat (serving this exact dashboard).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Info Sections explaining NLB -->
+    <div class="explanation-section">
+      <h2 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; text-align: center; margin-bottom: 12px;">
+        Understanding AWS Network Load Balancer (NLB)
+      </h2>
+      <p style="text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 36px;">
+        AWS NLB operates at the fourth layer of the OSI model (TCP/UDP/TLS). It is optimized for routing ultra-high volumes of network-level traffic with minimal overhead.
+      </p>
+
+      <div class="info-grid">
+        
+        <!-- Info Item 1 -->
+        <div class="info-item">
+          <div class="info-icon-wrapper">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3>Ultra-Low Latency</h3>
+          <p>
+            Operating at Layer 4, the NLB doesn't unpack the application headers. It routes packets directly at the transport layer, resulting in sub-millisecond latencies and incredible throughput.
+          </p>
+        </div>
+
+        <!-- Info Item 2 -->
+        <div class="info-item">
+          <div class="info-icon-wrapper">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <h3>Static & Elastic IPs</h3>
+          <p>
+            Unlike Application Load Balancers, an NLB reserves a single, persistent Static IP address for each Availability Zone. You can also assign Elastic IPs, making firewall whitelisting easy.
+          </p>
+        </div>
+
+        <!-- Info Item 3 -->
+        <div class="info-item">
+          <div class="info-icon-wrapper">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3>Millions of RPS</h3>
+          <p>
+            Designed to handle sudden, volatile traffic spikes. NLB can scale instantly from thousands of requests to millions of requests per second (RPS) without pre-warming.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Comparison Table Section -->
+    <div class="glass-card compare-container">
+      <div class="card-title">
+        <i class="fa-solid fa-scale-balanced"></i>
+        NLB vs. ALB: Choosing the Right Balancer
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="tag-nlb">Network Load Balancer (NLB)</th>
+              <th>Application Load Balancer (ALB)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>OSI Layer</strong></td>
+              <td class="tag-nlb">Layer 4 (TCP, UDP, TLS)</td>
+              <td>Layer 7 (HTTP, HTTPS, HTTP/2, gRPC)</td>
+            </tr>
+            <tr>
+              <td><strong>Performance</strong></td>
+              <td class="tag-nlb">Ultra-high speed, microsecond latency</td>
+              <td>High performance, millisecond latency</td>
+            </tr>
+            <tr>
+              <td><strong>Routing Mechanism</strong></td>
+              <td class="tag-nlb">Port or Protocol-based routing</td>
+              <td>Host header, Path, Query string, or Method routing</td>
+            </tr>
+            <tr>
+              <td><strong>Static IP Support</strong></td>
+              <td class="tag-nlb">Yes (Static & Elastic IPs per AZ)</td>
+              <td>No (DNS name only, dynamic IPs)</td>
+            </tr>
+            <tr>
+              <td><strong>Health Checks</strong></td>
+              <td class="tag-nlb">TCP / HTTP / HTTPS active checks</td>
+              <td>Deep HTTP/HTTPS content checks</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        AWS DevOps Demo Environment <span class="footer-highlight">Tomcat-Node-02</span> &bull; 
+        Built with <i class="fa-solid fa-heart" style="color: #ff3366;"></i> for high availability demonstration.
+      </p>
+    </footer>
+
+  </div>
+
+  <script>
+    // Adjust metrics dynamically on node to simulate realism
+    let reqCount = 1284;
+    
+    function updateMetrics() {
+      // Simulate slight fluctuations in CPU usage
+      const cpu = (Math.random() * 8 + 3).toFixed(1);
+      document.getElementById('val-cpu').innerText = cpu + '%';
+      document.getElementById('bar-cpu').style.width = (parseFloat(cpu) * 8) + '%';
+      
+      // Simulate RAM usage drift
+      const ram = Math.floor(Math.random() * 10 + 240);
+      document.getElementById('val-ram').innerText = ram + ' MB';
+      document.getElementById('bar-ram').style.width = (ram / 10.24) + '%';
+      
+      // Increment request counter
+      reqCount += Math.floor(Math.random() * 3);
+      document.getElementById('val-requests').innerText = reqCount.toLocaleString();
+    }
+    
+    // Periodically update mock server metrics
+    setInterval(updateMetrics, 2500);
+    // Initial run
+    updateMetrics();
+
+    // SVG Layout & Routing Paths Calculations
+    function drawDiagramPaths() {
+      const svg = document.getElementById('diagram-links');
+      const clientNode = document.getElementById('node-client');
+      const nlbNode = document.getElementById('node-nlb');
+      const server80 = document.getElementById('node-80');
+      const server8080 = document.getElementById('node-8080');
+      
+      if(!svg || !clientNode || !nlbNode || !server80 || !server8080) return;
+      const svgRect = svg.getBoundingClientRect();
+      
+      const getCenterCoords = (element) => {
+        const r = element.getBoundingClientRect();
+        return {
+          x: r.left - svgRect.left + r.width / 2,
+          y: r.top - svgRect.top + r.height / 2,
+          left: r.left - svgRect.left,
+          right: r.right - svgRect.left,
+          top: r.top - svgRect.top,
+          bottom: r.bottom - svgRect.top,
+          width: r.width,
+          height: r.height
+        };
+      };
+
+      const c = getCenterCoords(clientNode);
+      const n = getCenterCoords(nlbNode);
+      const s80 = getCenterCoords(server80);
+      const s8080 = getCenterCoords(server8080);
+
+      // Set Path Coordinates
+      
+      // 1. Client to NLB path
+      const clientToNlbD = `M ${c.right} ${c.y} L ${n.left} ${n.y}`;
+      document.getElementById('path-client-nlb').setAttribute('d', clientToNlbD);
+      document.getElementById('flow-client-nlb').setAttribute('d', clientToNlbD);
+      
+      // 2. NLB to Port 80 Server
+      const nlbTo80D = `M ${n.right} ${n.y} C ${(n.right + s80.left)/2} ${n.y}, ${(n.right + s80.left)/2} ${s80.y}, ${s80.left} ${s80.y}`;
+      document.getElementById('path-to-80-bg').setAttribute('d', nlbTo80D);
+      document.getElementById('flow-to-80').setAttribute('d', nlbTo80D);
+      
+      // 3. NLB to Port 8080 Server
+      const nlbTo8080D = `M ${n.right} ${n.y} C ${(n.right + s8080.left)/2} ${n.y}, ${(n.right + s8080.left)/2} ${s8080.y}, ${s8080.left} ${s8080.y}`;
+      document.getElementById('path-to-8080-bg').setAttribute('d', nlbTo8080D);
+      document.getElementById('flow-to-8080').setAttribute('d', nlbTo8080D);
+    }
+
+    // Call drawDiagramPaths on resize and load
+    window.addEventListener('resize', drawDiagramPaths);
+    window.addEventListener('load', () => {
+      // Small timeout to ensure dimensions are fully rendered
+      setTimeout(drawDiagramPaths, 200);
+    });
+
+    // Interactive Router Simulator Logic
+    function simulateRoute(port) {
+      // Clean up previous states
+      resetSimulationVisuals();
+
+      const flowClientNlb = document.getElementById('flow-client-nlb');
+      const nodeNlb = document.getElementById('node-nlb');
+      const nlbSubtitle = document.getElementById('nlb-subtitle');
+      
+      // Trigger flow to NLB
+      flowClientNlb.classList.add('active');
+      
+      setTimeout(() => {
+        // NLB receives traffic
+        nodeNlb.style.setProperty('--glow-color', 'var(--color-primary-glow)');
+        nodeNlb.style.setProperty('--route-color', 'var(--color-primary)');
+        nodeNlb.classList.add('active-route');
+        
+        if (port === 80) {
+          nlbSubtitle.innerText = 'Routing to Port 80...';
+          nlbSubtitle.style.color = 'var(--color-accent)';
+          
+          // Trigger flow to Server 80
+          const flow80 = document.getElementById('flow-to-80');
+          const serverNode80 = document.getElementById('node-80');
+          flow80.classList.add('active');
+          
+          setTimeout(() => {
+            serverNode80.style.setProperty('--glow-color', 'rgba(157, 78, 221, 0.4)');
+            serverNode80.style.setProperty('--route-color', 'var(--color-accent)');
+            serverNode80.classList.add('active-route');
+            nlbSubtitle.innerText = 'Routed to Port 80 ✅';
+          }, 600);
+
+        } else if (port === 8080) {
+          nlbSubtitle.innerText = 'Routing to Port 8080...';
+          nlbSubtitle.style.color = 'var(--color-secondary)';
+          
+          // Trigger flow to Server 8080
+          const flow8080 = document.getElementById('flow-to-8080');
+          const serverNode8080 = document.getElementById('node-8080');
+          flow8080.classList.add('active');
+          
+          setTimeout(() => {
+            serverNode8080.style.setProperty('--glow-color', 'var(--color-secondary-glow)');
+            serverNode8080.style.setProperty('--route-color', 'var(--color-secondary)');
+            serverNode8080.classList.add('active-route');
+            nlbSubtitle.innerText = 'Routed to Port 8080 ✅';
+            
+            // Add a temporary request count boost
+            reqCount += 1;
+            document.getElementById('val-requests').innerText = reqCount.toLocaleString();
+          }, 600);
+        }
+      }, 700);
+
+      // Update button visual state
+      document.querySelectorAll('.btn-control').forEach(btn => btn.classList.remove('active-80', 'active-8080'));
+      if (port === 80) {
+        event.currentTarget.classList.add('active-80');
+      } else {
+        event.currentTarget.classList.add('active-8080');
+      }
+    }
+
+    function resetSimulationVisuals() {
+      // Remove class lists
+      document.getElementById('flow-client-nlb').classList.remove('active');
+      document.getElementById('flow-to-80').classList.remove('active');
+      document.getElementById('flow-to-8080').classList.remove('active');
+      
+      document.getElementById('node-nlb').classList.remove('active-route');
+      document.getElementById('node-80').classList.remove('active-route');
+      document.getElementById('node-8080').classList.remove('active-route');
+      
+      const nlbSubtitle = document.getElementById('nlb-subtitle');
+      nlbSubtitle.innerText = 'Listening...';
+      nlbSubtitle.style.color = 'var(--text-muted)';
+    }
+
+    function resetSimulation() {
+      resetSimulationVisuals();
+      document.querySelectorAll('.btn-control').forEach(btn => btn.classList.remove('active-80', 'active-8080'));
+    }
+  </script>
+</body>
+</html>
